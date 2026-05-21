@@ -1,0 +1,1751 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="index, follow">
+    <title>גלה את ישראל מכל זווית — מפות ישראל</title>
+    <meta name="description" content="מפות של ישראל בצורה ויזואלית ומרתקת! חקור ערים, אזורים וגבולות בקלות. מושלם לתיירות, חינוך ונדל״ן. התחל את המסע הגיאוגרפי שלך עכשיו!">
+    <meta name="keywords" content="מפות של ישראל, מפות ישראל, גיאוגרפיה של ישראל, מפות אינטראקטיביות, אטלס ישראל">
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48x48.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/assets/favicon-512x512.png">
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+    <!-- Zappy Analytics -->
+<script>
+(function() {
+  'use strict';
+  
+  // Configuration
+  var config = {
+    websiteId: 'c327cde1-3b24-4e8f-b0ce-7edd15019b68',
+    apiUrl: 'https://api.zappy5.com/api/analytics/track',
+    sessionDuration: 30 * 60 * 1000, // 30 minutes
+    visitorDuration: 30 * 24 * 60 * 60 * 1000, // 30 days
+    trackPageViews: true,
+    trackClicks: true,
+    trackFormSubmissions: true
+  };
+  
+  // Generate or retrieve persistent visitor ID (30 days)
+  function getVisitorId() {
+    var visitorKey = 'zappy_visitor_' + config.websiteId;
+    var visitor = null;
+    
+    try {
+      visitor = localStorage.getItem(visitorKey);
+      if (visitor) {
+        var visitorData = JSON.parse(visitor);
+        var now = Date.now();
+        
+        // Check if visitor ID is still valid (30 days)
+        if (now - visitorData.created < config.visitorDuration) {
+          // Update last seen timestamp
+          visitorData.lastSeen = now;
+          localStorage.setItem(visitorKey, JSON.stringify(visitorData));
+          return visitorData.id;
+        }
+      }
+    } catch (e) {
+      console.warn('Zappy Analytics: LocalStorage not available');
+    }
+    
+    // Generate new visitor ID
+    var newVisitorId = 'zv_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    
+    try {
+      localStorage.setItem(visitorKey, JSON.stringify({
+        id: newVisitorId,
+        created: Date.now(),
+        lastSeen: Date.now()
+      }));
+    } catch (e) {
+      // Continue without local storage
+    }
+    
+    return newVisitorId;
+  }
+  
+  // Generate or retrieve session ID (30 minutes)
+  function getSessionId() {
+    var sessionKey = 'zappy_session_' + config.websiteId;
+    var session = null;
+    
+    try {
+      session = sessionStorage.getItem(sessionKey);
+      if (session) {
+        var sessionData = JSON.parse(session);
+        var now = Date.now();
+        
+        // Check if session is still valid
+        if (now - sessionData.timestamp < config.sessionDuration) {
+          // Update timestamp
+          sessionData.timestamp = now;
+          sessionStorage.setItem(sessionKey, JSON.stringify(sessionData));
+          return sessionData.id;
+        }
+      }
+    } catch (e) {
+      console.warn('Zappy Analytics: SessionStorage not available');
+    }
+    
+    // Generate new session ID
+    var newSessionId = 'zs_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    
+    try {
+      sessionStorage.setItem(sessionKey, JSON.stringify({
+        id: newSessionId,
+        timestamp: Date.now()
+      }));
+    } catch (e) {
+      // Continue without session storage
+    }
+    
+    return newSessionId;
+  }
+  
+  var visitorId = getVisitorId();
+  var sessionId = getSessionId();
+  
+  // Track an event
+  function trackEvent(eventType, data) {
+    data = data || {};
+    
+    var eventData = {
+      website_id: config.websiteId,
+      event_type: eventType,
+      page_path: window.location.pathname,
+      referrer: document.referrer || 'direct',
+      visitor_id: visitorId,
+      session_id: sessionId,
+      metadata: data
+    };
+    
+    // Use sendBeacon if available (better for page unload events)
+    if (navigator.sendBeacon) {
+      var blob = new Blob([JSON.stringify(eventData)], { type: 'application/json' });
+      navigator.sendBeacon(config.apiUrl, blob);
+    } else {
+      // Fallback to fetch
+      fetch(config.apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(eventData),
+        keepalive: true
+      }).catch(function(error) {
+        console.warn('Zappy Analytics: Failed to track event', error);
+      });
+    }
+  }
+  
+  // Track page view
+  if (config.trackPageViews) {
+    trackEvent('pageview', {
+      title: document.title,
+      url: window.location.href
+    });
+  }
+  
+  // Track clicks on important elements
+  if (config.trackClicks) {
+    document.addEventListener('click', function(e) {
+      var target = e.target;
+      
+      // Track button clicks (counted as actions)
+      if (target.tagName === 'BUTTON' || target.closest('button')) {
+        var button = target.tagName === 'BUTTON' ? target : target.closest('button');
+        trackEvent('click', {
+          element: 'button',
+          text: button.textContent.trim().substring(0, 100),
+          id: button.id || null,
+          class: button.className || null
+        });
+      }
+      
+      // Track link clicks (navigation - not counted as actions)
+      else if (target.tagName === 'A' || target.closest('a')) {
+        var link = target.tagName === 'A' ? target : target.closest('a');
+        trackEvent('navigation', {
+          element: 'link',
+          text: link.textContent.trim().substring(0, 100),
+          href: link.href,
+          external: link.hostname !== window.location.hostname
+        });
+      }
+    }, true);
+  }
+  
+  // Track form submissions
+  if (config.trackFormSubmissions) {
+    document.addEventListener('submit', function(e) {
+      var form = e.target;
+      
+      trackEvent('form_submit', {
+        form_id: form.id || null,
+        form_name: form.name || null,
+        form_action: form.action || null,
+        form_method: form.method || 'GET'
+      });
+    }, true);
+  }
+  
+  // Track time on page (send on page unload)
+  var pageLoadTime = Date.now();
+  
+  window.addEventListener('beforeunload', function() {
+    var timeOnPage = Math.floor((Date.now() - pageLoadTime) / 1000); // in seconds
+    
+    trackEvent('page_unload', {
+      time_on_page: timeOnPage,
+      page_path: window.location.pathname
+    });
+  });
+  
+  // Expose tracking function globally for custom events
+  window.zappyAnalytics = {
+    track: trackEvent,
+    getVisitorId: function() { return visitorId; },
+    getSessionId: function() { return sessionId; }
+  };
+  
+})();
+</script>
+<!-- End Zappy Analytics -->
+    <meta property="og:title" content="גלה את ישראל מכל זווית — מפות ישראל">
+    <meta property="og:description" content="מפות של ישראל בצורה ויזואלית ומרתקת! חקור ערים, אזורים וגבולות בקלות. מושלם לתיירות, חינוך ונדל״ן. התחל את המסע הגיאוגרפי שלך עכשיו!">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="גלה את ישראל מכל זווית — מפות ישראל">
+    <meta name="twitter:description" content="מפות של ישראל בצורה ויזואלית ומרתקת! חקור ערים, אזורים וגבולות בקלות. מושלם לתיירות, חינוך ונדל״ן. התחל את המסע הגיאוגרפי שלך עכשיו!">
+    <meta property="og:type" content="website">
+  <meta property="og:locale" content="he_IL">
+  
+  
+  
+  
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .skip-link { position: absolute; top: 0; left: 0; transform: translateY(-200%); padding: 12px 18px; background: var(--bg-dark, #1a1a1a); color: var(--text-light, #fff); font-weight: 600; border-radius: 0 0 8px 0; z-index: 10000; }
+    .skip-link:focus { transform: none; outline: 2px solid var(--ring, #fff); outline-offset: 2px; }
+    :focus-visible { outline: 2px solid var(--ring, currentColor); outline-offset: 3px; }
+  </style>
+
+
+  
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48x48.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/assets/favicon-512x512.png">
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+    <!-- Cookie Consent -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanilla-cookieconsent@3/dist/cookieconsent.css">
+    <script src="https://cdn.jsdelivr.net/npm/vanilla-cookieconsent@3/dist/cookieconsent.umd.js"></script>
+    <!-- Mickidum Accessibility Toolbar -->
+    <script src="https://cdn.jsdelivr.net/gh/mickidum/acc_toolbar/acctoolbar/acctoolbar.min.js"></script>
+    <link rel="stylesheet" href="/styles.css">
+
+    <style id="zappy-dropdown-submenu-styles">
+      /* ========== DESKTOP DROPDOWN SUBMENU STYLES ========== */
+      /* Base styles for dropdown submenus - parent must be positioned */
+      .nav-menu li:has(.sub-menu), nav li:has(.sub-menu), .navbar li:has(.sub-menu), #navMenu li:has(.sub-menu) { position: relative; }
+      /* Submenu base - hidden by default */
+      .nav-menu .sub-menu, nav .sub-menu, .navbar .sub-menu, #navMenu .sub-menu { display: block !important; position: absolute !important; top: 100%; left: 0; min-width: 220px; background: white; border-radius: 8px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); padding: 8px 0; opacity: 0; visibility: hidden; transform: translateY(10px); transition: all 0.3s ease; z-index: 1000; list-style: none; pointer-events: none; }
+      /* CRITICAL: Desktop hover styles to show dropdown */
+      .nav-menu li:hover > .sub-menu, nav li:hover > .sub-menu, .navbar li:hover > .sub-menu, #navMenu li:hover > .sub-menu { opacity: 1 !important; visibility: visible !important; transform: translateY(0) !important; pointer-events: auto !important; }
+      /* Submenu item styling */
+      .sub-menu li { list-style: none; margin: 0; padding: 0; }
+      .sub-menu a { display: block !important; padding: 10px 16px !important; color: var(--text-dark, #333) !important; font-weight: 500; text-decoration: none; white-space: nowrap; transition: background-color 0.2s; }
+      .sub-menu .zappy-nav-child > a { padding-left: 28px !important; font-size: 0.9em !important; opacity: 0.85 !important; }
+      [dir="rtl"] .sub-menu .zappy-nav-child > a, html[lang="he"] .sub-menu .zappy-nav-child > a, html[lang="ar"] .sub-menu .zappy-nav-child > a { padding-left: 10px !important; padding-right: 28px !important; }
+      .sub-menu .zappy-nav-parent > a { font-weight: 600 !important; }
+      .sub-menu a:hover { background-color: #f5f5f5; }
+      /* RTL (Hebrew/Arabic) dropdown positioning */
+      [dir="rtl"] .nav-menu .sub-menu, [dir="rtl"] nav .sub-menu, [dir="rtl"] .navbar .sub-menu, html[lang="he"] .nav-menu .sub-menu, html[lang="he"] nav .sub-menu, html[lang="he"] .navbar .sub-menu, html[lang="ar"] .nav-menu .sub-menu, html[lang="ar"] nav .sub-menu, html[lang="ar"] .navbar .sub-menu { left: auto !important; right: 0 !important; }
+      /* Hide empty dropdown menus (exclude catalog sub-menus that use <a> children instead of <li>) */
+      .sub-menu:empty, .sub-menu:not(:has(li:not(.zappy-hidden-menu-item))):not(:has(> a)), .sub-menu:not(:has(li)):not(:has(> a)) { display: none !important; opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; }
+      /* Desktop: show submenu on Menu Group hover */
+      li:has(.menu-group-title):hover > .sub-menu { opacity: 1 !important; visibility: visible !important; transform: translateY(0) !important; pointer-events: auto !important; }
+      /* Menu Group title styling */
+      .nav-menu > li > .menu-group-title, #navMenu > li > .menu-group-title { display: inline-block; padding: 0.5rem 1rem; cursor: default; user-select: none; }
+      
+      /* ========== MOBILE SUBMENU STYLES ========== */
+      @media (max-width: 768px) {
+        .nav-menu .sub-menu, nav .sub-menu, .navbar .sub-menu, #navMenu .sub-menu { position: static !important; transform: none !important; box-shadow: none !important; background: transparent !important; max-height: 0; overflow: hidden; opacity: 0; visibility: hidden; transition: max-height 0.3s ease, opacity 0.3s ease; padding: 0 !important; border-radius: 0 !important; }
+        .navbar .sub-menu.mobile-expanded, .nav-menu .sub-menu.mobile-expanded, #navMenu .sub-menu.mobile-expanded { max-height: none !important; overflow-y: visible !important; opacity: 1 !important; visibility: visible !important; padding: 8px 0 8px 16px !important; }
+        [dir="rtl"] .sub-menu.mobile-expanded, html[lang="he"] .sub-menu.mobile-expanded { padding: 8px 16px 8px 0 !important; }
+        /* Disable hover behavior on mobile */
+        .nav-menu li:hover > .sub-menu, nav li:hover > .sub-menu, .navbar li:hover > .sub-menu, #navMenu li:hover > .sub-menu { opacity: 0; visibility: hidden; pointer-events: none; }
+        .nav-menu li > .sub-menu.mobile-expanded, nav li > .sub-menu.mobile-expanded, .navbar li > .sub-menu.mobile-expanded, #navMenu li > .sub-menu.mobile-expanded { opacity: 1 !important; visibility: visible !important; pointer-events: auto !important; }
+        .nav-menu li:has(.sub-menu), nav li:has(.sub-menu), .navbar li:has(.sub-menu), #navMenu li:has(.sub-menu) { display: flex !important; flex-wrap: wrap !important; align-items: center !important; position: relative !important; min-height: 44px !important; }
+        .nav-menu li:has(.sub-menu) > a, nav li:has(.sub-menu) > a, .navbar li:has(.sub-menu) > a, #navMenu li:has(.sub-menu) > a { flex: 1 !important; min-width: 0 !important; }
+        .nav-menu li:has(.sub-menu) > .menu-group-title, nav li:has(.sub-menu) > .menu-group-title, .navbar li:has(.sub-menu) > .menu-group-title, #navMenu li:has(.sub-menu) > .menu-group-title { flex: 1 !important; min-width: 0 !important; padding: 0 !important; line-height: inherit !important; }
+        .nav-menu li:has(.sub-menu) > .sub-menu, nav li:has(.sub-menu) > .sub-menu, .navbar li:has(.sub-menu) > .sub-menu, #navMenu li:has(.sub-menu) > .sub-menu { flex-basis: 100% !important; width: 100% !important; }
+        .nav-menu li:has(.sub-menu) > a [class*="chevron"], .nav-menu li:has(.sub-menu) > a [class*="arrow"], .nav-menu li:has(.sub-menu) > a .fa-chevron-down, .nav-menu li:has(.sub-menu) > a .fa-angle-down, nav li:has(.sub-menu) > a [class*="chevron"], nav li:has(.sub-menu) > a [class*="arrow"], #navMenu li:has(.sub-menu) > a [class*="chevron"], #navMenu li:has(.sub-menu) > a [class*="arrow"] { display: none !important; visibility: hidden !important; }
+        .mobile-submenu-toggle { display: flex !important; align-items: center !important; justify-content: center !important; width: 44px !important; height: auto !important; background: transparent !important; border: none !important; cursor: pointer !important; color: var(--text-light) !important; position: static !important; flex-shrink: 0 !important; align-self: stretch !important; z-index: 2 !important; padding: 0 !important; margin: 0 !important; }
+        .mobile-submenu-toggle::after { content: '' !important; width: 0 !important; height: 0 !important; border-left: 6px solid transparent !important; border-right: 6px solid transparent !important; border-top: 7px solid currentColor !important; transition: transform 0.3s ease !important; }
+        .mobile-submenu-toggle.expanded::after { transform: rotate(180deg) !important; }
+        .sub-menu a { padding: 10px 0 !important; display: block !important; color: var(--text-light) !important; white-space: normal !important; }
+        .sub-menu .zappy-nav-child > a { padding-left: 28px !important; font-size: 0.9em !important; opacity: 0.85 !important; }
+        [dir="rtl"] .sub-menu .zappy-nav-child > a, html[lang="he"] .sub-menu .zappy-nav-child > a, html[lang="ar"] .sub-menu .zappy-nav-child > a { padding-left: 0 !important; padding-right: 28px !important; }
+        .sub-menu .zappy-nav-parent > a { font-weight: 600 !important; }
+        .nav-menu.active, #navMenu.active { max-width: 100vw !important; overflow-x: hidden !important; box-sizing: border-box !important; }
+        .navbar .sub-menu li a, nav.navbar .sub-menu li a, .zappy-products-dropdown .sub-menu a { color: var(--text-light) !important; }
+      }
+      @media (min-width: 769px) { .mobile-submenu-toggle { display: none !important; } }
+    </style>
+
+    <style id="zappy-widget-visibility">
+      html[dir="rtl"] .whatsapp-float { right: 20px !important; left: auto !important; }
+      html[dir="ltr"] .whatsapp-float, html:not([dir]) .whatsapp-float { left: 20px !important; right: auto !important; }
+      html[dir="rtl"] #mic-access-tool-general-button, html[dir="rtl"] .mic-access-tool-general-button,
+      html[dir="rtl"] #mic-init-access-tool .mic-access-tool-general-button,
+      html[dir="rtl"] #mic-init-access-tool #mic-access-tool-general-button,
+      html[dir="rtl"] ._access-icon { left: 20px !important; right: auto !important; }
+      html[dir="ltr"] #mic-access-tool-general-button, html[dir="ltr"] .mic-access-tool-general-button,
+      html[dir="ltr"] #mic-init-access-tool .mic-access-tool-general-button,
+      html[dir="ltr"] #mic-init-access-tool #mic-access-tool-general-button,
+      html[dir="ltr"] ._access-icon,
+      html:not([dir]) #mic-access-tool-general-button, html:not([dir]) .mic-access-tool-general-button,
+      html:not([dir]) #mic-init-access-tool .mic-access-tool-general-button,
+      html:not([dir]) #mic-init-access-tool #mic-access-tool-general-button,
+      html:not([dir]) ._access-icon { right: 20px !important; left: auto !important; }
+      @media (max-width: 768px) { .whatsapp-float { display: flex !important; } }
+      @media (min-width: 769px) { .whatsapp-float { display: flex !important; } }
+      @media (max-width: 768px) {
+        #mic-access-tool-general-button, .mic-access-tool-general-button,
+        #mic-init-access-tool .mic-access-tool-general-button, #mic-init-access-tool #mic-access-tool-general-button,
+        ._access-icon { display: flex !important; visibility: visible !important; opacity: 1 !important; pointer-events: auto !important; }
+        #mic-access-tool-box.opened-mic-access-tool, .mic-access-tool-box.opened-mic-access-tool,
+        #mic-init-access-tool #mic-access-tool-box.opened-mic-access-tool {
+          visibility: visible !important; opacity: 1 !important; pointer-events: auto !important;
+        }
+      }
+      @media (min-width: 769px) {
+        #mic-access-tool-general-button, .mic-access-tool-general-button,
+        #mic-init-access-tool .mic-access-tool-general-button, #mic-init-access-tool #mic-access-tool-general-button,
+        ._access-icon { display: flex !important; visibility: visible !important; opacity: 1 !important; pointer-events: auto !important; }
+        #mic-access-tool-box.opened-mic-access-tool, .mic-access-tool-box.opened-mic-access-tool,
+        #mic-init-access-tool #mic-access-tool-box.opened-mic-access-tool {
+          visibility: visible !important; opacity: 1 !important; pointer-events: auto !important;
+        }
+      }
+    </style>
+</head>
+<body>
+<a class="skip-link" href="#main">דלג לתוכן הראשי</a>
+  <nav class="navbar" dir="rtl">
+  <button class="mobile-toggle" id="mobileToggle" aria-label="Menu">
+    <svg class="hamburger-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
+      <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+    </svg>
+    <svg class="close-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" style="display: none;">
+      <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+    </svg>
+  </button>
+
+  <button class="phone-header-btn" data-phone="[business_phone]" aria-label="Call">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+    </svg>
+  </button>
+
+  <div class="nav-container">
+    <div class="nav-right-group"><div class="nav-brand">
+      <a href="/" class="logo-link"><img class="logo" src="/assets/site-----image-1.webp" alt="מפות ישראל"></a>
+    </div><ul class="nav-menu" id="navMenu"><li><a href="#features">תכונות</a></li><li><a href="#showcase">גלריה</a></li><li><a href="#benefits">יתרונות</a></li><li><a href="#testimonials">המלצות</a></li><li><a href="#stats">נתונים</a></li></ul></div>
+
+    
+
+    <div class="nav-cta-container">
+      <a href="#cta" class="nav-cta-btn">צור קשר</a>
+    </div>
+  </div>
+</nav>
+<script>
+
+// Navbar Mobile Menu Toggle and Contrast Fix
+(function() {
+  // Use 'load' event instead of 'DOMContentLoaded' to ensure we run AFTER all other scripts
+  window.addEventListener('load', function() {
+    
+    // FIX MOBILE BUTTON CONTRAST
+    // Detect navbar background color and apply contrasting color to mobile buttons
+    const navbar = document.querySelector('.navbar, nav, header');
+    if (!navbar) {
+      console.log('[Navbar] Navbar element not found');
+      return;
+    }
+    
+    // DECLARE VARIABLES EARLY to avoid Temporal Dead Zone errors
+    // These are used in multiple places below
+    let mobileToggle = document.getElementById('mobileToggle') ||
+                       document.querySelector('.mobile-toggle') ||
+                       document.querySelector('.hamburger') ||
+                       document.querySelector('.hamburger-menu') ||
+                       document.querySelector('.menu-toggle') ||
+                       document.querySelector('.burger-menu') ||
+                       document.querySelector('[aria-label="Menu"]') ||
+                       document.querySelector('[aria-label="תפריט"]');
+    
+    const phoneBtn = document.querySelector('.phone-header-btn');
+    
+    const computedStyle = window.getComputedStyle(navbar);
+    let bgColor = computedStyle.backgroundColor;
+    
+    console.log('[Navbar] Initial navbar background:', bgColor);
+    
+    // Check if background is transparent or rgba with 0 alpha
+    const isTransparent = bgColor === 'transparent' || 
+                         bgColor === 'rgba(0, 0, 0, 0)' ||
+                         (bgColor.startsWith('rgba') && bgColor.includes(', 0)'));
+    
+    if (isTransparent) {
+      // Check for background-image or gradient
+      const bgImage = computedStyle.backgroundImage;
+      if (bgImage && bgImage !== 'none') {
+        console.log('[Navbar] Navbar has background image/gradient, using dark text');
+        bgColor = 'rgb(240, 240, 240)'; // Assume light background
+      } else {
+        // Transparent navbar - check body background
+        const bodyBg = window.getComputedStyle(document.body).backgroundColor;
+        console.log('[Navbar] Navbar transparent, using body background:', bodyBg);
+        bgColor = bodyBg;
+      }
+    }
+    
+    // Calculate luminance to determine if background is light or dark
+    const rgb = bgColor.match(/\d+/g);
+    if (rgb && rgb.length >= 3) {
+      const r = parseInt(rgb[0]);
+      const g = parseInt(rgb[1]);
+      const b = parseInt(rgb[2]);
+      const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+      
+      // Mobile button colors are set by Claude's AI-generated CSS (same as .nav-menu a)
+      // No dynamic color overrides needed - colors come from the generated navbar CSS
+      console.log('[Navbar] Mobile button colors preserved from Claude CSS (luminance:', luminance.toFixed(2) + ')');
+      
+      // FIX ICON SIZES - Ensure SVGs are properly sized and visible
+      // INJECT CRITICAL CSS TO OVERRIDE ANY CONFLICTING RULES
+      const criticalCSS = document.createElement('style');
+      criticalCSS.id = 'zappy-mobile-nav-fix';
+      const htmlLang = document.documentElement.lang || 'en';
+      const htmlDir = document.documentElement.dir || 'ltr';
+      // Check both dir attribute AND lang for RTL detection
+      // dir="rtl" is the most reliable indicator
+      const isRTL = htmlDir === 'rtl' || htmlLang === 'he' || htmlLang === 'ar';
+      
+      criticalCSS.textContent = `
+        /* Hide mobile buttons on desktop, show only on mobile */
+        @media (min-width: 769px) {
+          .mobile-toggle,
+          .phone-header-btn {
+            display: none !important;
+          }
+        }
+        
+        /* Show and position mobile buttons correctly on mobile */
+        @media (max-width: 768px) {
+          .navbar,
+          nav.navbar {
+            min-height: 70px !important;
+          }
+
+          .mobile-toggle,
+          .phone-header-btn {
+            position: absolute !important;
+            top: 0 !important;
+            bottom: 0 !important;
+            margin-top: auto !important;
+            margin-bottom: auto !important;
+            transform: none !important;
+            z-index: 1001 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 36px !important;
+            height: 36px !important;
+            border-radius: 50% !important;
+            border: none !important;
+            cursor: pointer !important;
+            padding: 6px !important;
+            background: none !important;
+            color: var(--nav-text, var(--text-light)) !important;
+            touch-action: manipulation !important;
+            -webkit-tap-highlight-color: transparent !important;
+          }
+
+          html[data-zappy-site-type="ecommerce"] .phone-header-btn,
+          body[data-zappy-site-type="ecommerce"] .phone-header-btn,
+          html[data-zappy-site-type="ecommerce"] header .phone-header-btn,
+          html[data-zappy-site-type="ecommerce"] nav .phone-header-btn {
+            display: none !important;
+            visibility: hidden !important;
+            width: 0 !important;
+            height: 0 !important;
+            min-width: 0 !important;
+            overflow: hidden !important;
+          }
+          
+          /* LTR positioning (default): hamburger LEFT, phone RIGHT */
+          html:not([dir="rtl"]):not([lang="he"]):not([lang="ar"]) .mobile-toggle,
+          html[dir="ltr"] .mobile-toggle {
+            left: 12px !important;
+            right: auto !important;
+          }
+          html:not([dir="rtl"]):not([lang="he"]):not([lang="ar"]) .phone-header-btn,
+          html[dir="ltr"] .phone-header-btn {
+            right: 12px !important;
+            left: auto !important;
+          }
+          
+          /* RTL positioning: hamburger RIGHT, phone LEFT */
+          html[dir="rtl"] .mobile-toggle,
+          html[lang="he"] .mobile-toggle,
+          html[lang="ar"] .mobile-toggle {
+            right: 12px !important;
+            left: auto !important;
+          }
+          html[dir="rtl"] .phone-header-btn,
+          html[lang="he"] .phone-header-btn,
+          html[lang="ar"] .phone-header-btn {
+            left: 12px !important;
+            right: auto !important;
+          }
+          
+          /* CRITICAL: Ensure nav-container has min-height on mobile */
+          /* All children are positioned absolutely/fixed on mobile, so height:auto collapses to 0 */
+          .nav-container {
+            min-height: 70px !important;
+            position: relative !important;
+          }
+          
+          /* Ensure SVG icons are properly sized and inherit color */
+          .mobile-toggle svg,
+          .phone-header-btn svg {
+            width: 24px !important;
+            height: 24px !important;
+            /* Don't force display - let JavaScript control hamburger/close toggle */
+          }
+          
+          /* Reset nav-cta-container on mobile - remove desktop box-shadow/padding */
+          /* that creates a visible ghost box when CTA button is hidden */
+          .nav-cta-container {
+            box-shadow: none !important;
+            padding: 0 !important;
+          }
+          
+          /* Hide nav-cta-container entirely on mobile when there's no lang-switcher */
+          /* (only the CTA button is inside, and it's hidden on mobile) */
+          .nav-cta-container:not(:has(.lang-switcher)) {
+            display: none !important;
+          }
+          
+          /* CRITICAL: Prevent hero image fade gradient from bleeding over headline text */
+          /* The .image-fade-gradient has bottom: -30px (extends below parent) */
+          /* On mobile stacked layout, this overlaps the h1 text below the image */
+          .hero-image-column {
+            overflow: hidden !important;
+          }
+          .image-fade-gradient {
+            bottom: 0 !important;
+          }
+          
+          /* Hide desktop language switcher on mobile - hamburger menu handles it */
+          /* High specificity to override stored CSS */
+          .lang-switcher,
+          .nav-cta-container .lang-switcher,
+          .nav-container .lang-switcher,
+          .navbar .lang-switcher,
+          .navbar .nav-cta-container .lang-switcher {
+            display: none !important;
+          }
+        }
+      `;
+      
+      // Remove existing fix if present and inject new one
+      const existing = document.getElementById('zappy-mobile-nav-fix');
+      if (existing) existing.remove();
+      document.head.appendChild(criticalCSS);
+      
+      console.log('[Navbar] Critical CSS injected for mobile nav positioning');
+      
+      // ONLY apply inline positioning styles on mobile viewport
+      // On desktop, the CSS handles hiding these buttons with display: none
+      // Inline styles were breaking desktop layout by overriding CSS
+      const isMobileViewport = window.innerWidth <= 768;
+      
+      if (mobileToggle) {
+        // Icon sizing applies to all viewports for consistency
+        const hamburgerIcon = mobileToggle.querySelector('.hamburger-icon');
+        const closeIcon = mobileToggle.querySelector('.close-icon');
+        
+        if (hamburgerIcon) {
+          hamburgerIcon.style.setProperty('width', '24px', 'important');
+          hamburgerIcon.style.setProperty('height', '24px', 'important');
+          hamburgerIcon.style.setProperty('display', 'block', 'important'); // Show hamburger by default
+        }
+        if (closeIcon) {
+          closeIcon.style.setProperty('width', '24px', 'important');
+          closeIcon.style.setProperty('height', '24px', 'important');
+          closeIcon.style.setProperty('display', 'none', 'important'); // Hide close icon by default
+        }
+        
+        // ONLY set positioning inline styles on mobile
+        if (isMobileViewport) {
+          mobileToggle.style.setProperty('position', 'absolute', 'important');
+          mobileToggle.style.setProperty('top', '0', 'important');
+          mobileToggle.style.setProperty('bottom', '0', 'important');
+          mobileToggle.style.setProperty('margin-top', 'auto', 'important');
+          mobileToggle.style.setProperty('margin-bottom', 'auto', 'important');
+          mobileToggle.style.setProperty('transform', 'none', 'important');
+          mobileToggle.style.setProperty('z-index', '1001', 'important');
+          
+          // Clear any inline left/right so CSS can take over based on html[dir]
+          mobileToggle.style.removeProperty('left');
+          mobileToggle.style.removeProperty('right');
+          
+          console.log('[Navbar] Mobile toggle positioning applied (mobile viewport)');
+        } else {
+          // On desktop, clear any positioning styles to let CSS handle it
+          mobileToggle.style.removeProperty('position');
+          mobileToggle.style.removeProperty('top');
+          mobileToggle.style.removeProperty('transform');
+          mobileToggle.style.removeProperty('z-index');
+          mobileToggle.style.removeProperty('left');
+          mobileToggle.style.removeProperty('right');
+          console.log('[Navbar] Desktop viewport - cleared mobile toggle inline positioning');
+        }
+      }
+      
+      if (phoneBtn) {
+        // Icon sizing applies to all viewports
+        const phoneIcon = phoneBtn.querySelector('svg');
+        if (phoneIcon) {
+          phoneIcon.style.width = '24px';
+          phoneIcon.style.height = '24px';
+          phoneIcon.setAttribute('width', '24');
+          phoneIcon.setAttribute('height', '24');
+        }
+        
+        // ONLY set positioning inline styles on mobile
+        if (isMobileViewport) {
+          phoneBtn.style.setProperty('position', 'absolute', 'important');
+          phoneBtn.style.setProperty('top', '0', 'important');
+          phoneBtn.style.setProperty('bottom', '0', 'important');
+          phoneBtn.style.setProperty('margin-top', 'auto', 'important');
+          phoneBtn.style.setProperty('margin-bottom', 'auto', 'important');
+          phoneBtn.style.setProperty('transform', 'none', 'important');
+          phoneBtn.style.setProperty('z-index', '1001', 'important');
+          
+          // Clear any inline left/right so CSS can take over based on html[dir]
+          phoneBtn.style.removeProperty('left');
+          phoneBtn.style.removeProperty('right');
+          
+          console.log('[Navbar] Phone button positioning applied (mobile viewport)');
+        } else {
+          // On desktop, clear any positioning styles to let CSS handle it
+          phoneBtn.style.removeProperty('position');
+          phoneBtn.style.removeProperty('top');
+          phoneBtn.style.removeProperty('transform');
+          phoneBtn.style.removeProperty('z-index');
+          phoneBtn.style.removeProperty('left');
+          phoneBtn.style.removeProperty('right');
+          console.log('[Navbar] Desktop viewport - cleared phone button inline positioning');
+        }
+      }
+    } else {
+      console.log('[Navbar] Could not parse background color:', bgColor);
+    }
+    
+    // MOBILE MENU TOGGLE
+    // Re-query in case DOM changed (mobileToggle already declared at top of function)
+    mobileToggle = document.getElementById('mobileToggle') ||
+                   document.querySelector('.mobile-toggle') ||
+                   document.querySelector('.hamburger') ||
+                   document.querySelector('.hamburger-menu') ||
+                   document.querySelector('.menu-toggle') ||
+                   document.querySelector('.burger-menu') ||
+                   document.querySelector('[aria-label="Menu"]') ||
+                   document.querySelector('[aria-label="תפריט"]');
+    
+    // EXPANDED SEARCH: Find nav menu by ID or class
+    const navMenu = document.getElementById('navMenu') ||
+                  document.querySelector('.nav-menu') ||
+                  document.querySelector('.nav-links') ||
+                  document.querySelector('nav ul:not(.submenu)');
+    
+    if (!mobileToggle || !navMenu) {
+      console.log('[Navbar] Mobile toggle or menu not found:', { toggle: !!mobileToggle, menu: !!navMenu });
+      return;
+    }
+    
+    // Ensure navMenu has ID for CSS targeting
+    if (!navMenu.id) {
+      navMenu.id = 'navMenu';
+    }
+    
+    console.log('[Navbar] Initializing mobile menu...');
+    
+    // Remove any existing event listeners by cloning the button
+    const newToggle = mobileToggle.cloneNode(true);
+    mobileToggle.parentNode.replaceChild(newToggle, mobileToggle);
+    
+    // Toggle menu handler (shared by click and touchend)
+    function handleToggle(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      const hamburgerIcon = newToggle.querySelector('.hamburger-icon');
+      const closeIcon = newToggle.querySelector('.close-icon');
+      const isActive = navMenu.classList.contains('active');
+      
+      if (isActive) {
+        // Close menu
+        navMenu.classList.remove('active');
+        if (hamburgerIcon) hamburgerIcon.style.setProperty('display', 'block', 'important');
+        if (closeIcon) closeIcon.style.setProperty('display', 'none', 'important');
+        document.body.style.overflow = '';
+        console.log('[Navbar] Menu closed');
+      } else {
+        // Open menu
+        navMenu.classList.add('active');
+        if (hamburgerIcon) hamburgerIcon.style.setProperty('display', 'none', 'important');
+        if (closeIcon) closeIcon.style.setProperty('display', 'block', 'important');
+        document.body.style.overflow = 'hidden';
+        console.log('[Navbar] Menu opened');
+      }
+    }
+    
+    // Use click for desktop/emulation and touchend as iOS Safari fallback.
+    // Prevent double-fire with a timestamp guard.
+    var lastToggleTime = 0;
+    function guardedToggle(e) {
+      var now = Date.now();
+      if (now - lastToggleTime < 300) return;
+      lastToggleTime = now;
+      handleToggle(e);
+    }
+    
+    newToggle.addEventListener('click', guardedToggle);
+    newToggle.addEventListener('touchend', guardedToggle);
+    
+    // Close menu when clicking nav links (but NOT dropdown toggles)
+    const navLinks = navMenu.querySelectorAll('a');
+    navLinks.forEach(function(link) {
+      link.addEventListener('click', function() {
+        // Don't close if it's a dropdown child (unless it's a real navigation link)
+        if (this.getAttribute('href') === '#') return;
+        
+        const hamburgerIcon = newToggle.querySelector('.hamburger-icon');
+        const closeIcon = newToggle.querySelector('.close-icon');
+        
+        navMenu.classList.remove('active');
+        if (hamburgerIcon) hamburgerIcon.style.setProperty('display', 'block', 'important');
+        if (closeIcon) closeIcon.style.setProperty('display', 'none', 'important');
+        document.body.style.overflow = '';
+        console.log('[Navbar] Menu closed (link clicked)');
+      });
+    });
+    
+    // DROPDOWN MENU TOGGLE (for mobile and touch devices)
+    var dropdownToggles = navMenu.querySelectorAll('.dropdown-toggle');
+    dropdownToggles.forEach(function(toggle) {
+      toggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var parent = this.closest('.nav-dropdown');
+        if (!parent) return;
+        
+        // Close other open dropdowns at the same level
+        var siblings = parent.parentNode.querySelectorAll('.nav-dropdown.open');
+        siblings.forEach(function(sib) {
+          if (sib !== parent) sib.classList.remove('open');
+        });
+        
+        parent.classList.toggle('open');
+        console.log('[Navbar] Dropdown toggled:', parent.classList.contains('open') ? 'open' : 'closed');
+      });
+    });
+    
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.nav-dropdown')) {
+        var openDropdowns = document.querySelectorAll('.nav-dropdown.open');
+        openDropdowns.forEach(function(dd) { dd.classList.remove('open'); });
+      }
+    });
+    
+    console.log('[Navbar] Dropdown handlers initialized for ' + dropdownToggles.length + ' dropdowns');
+    
+    // Phone button functionality (phoneBtn already declared at top of function)
+    if (phoneBtn) {
+      phoneBtn.addEventListener('click', function() {
+        // Get phone number from placeholder in page or use default
+        const phoneLinks = document.querySelectorAll('a[href^="tel:"]');
+        const phoneNumber = phoneLinks.length > 0 
+          ? phoneLinks[0].getAttribute('href').replace('tel:', '')
+          : '[business_phone]';
+        
+        window.location.href = 'tel:' + phoneNumber;
+        console.log('[Navbar] Phone button clicked');
+      });
+    }
+    
+    console.log('[Navbar] Mobile menu initialized successfully');
+    
+    // WhatsApp button visibility is now controlled via CSS (siteSettings).
+    // No JS-based desktop hiding — the button is visible on both mobile and desktop by default.
+  });
+})();
+
+</script>
+  
+  <main id="main">
+    <section data-band-index="0" id="hero" class="index-hero-section" data-layout-spec="בית-hero" dir="rtl" data-hero-type="fullscreen-scrim">
+  <!-- Background Image -->
+  <div class="index-hero-bg">
+    <img loading="eager" fetchpriority="high" data-hero-bg="true" data-placeholder="index-hero-image-1" data-context="Cinematic satellite night-mode topographic map of Israel seen from above at night, glowing cyan contour lines tracing mountains and valleys, sparse magenta route accents along major highways, subtle gold dots marking cities and points of interest. The image feels like a premium atlas composite — dark deep navy-black background with dramatic contrast, glowing city clusters (Tel Aviv, Jerusalem, Haifa), and fine terrain detail. Restrained visual noise, cinematic mood, editorial precision." width="1440" height="900" src="/assets/site-index-hero-image-1.webp" alt="מפת ישראל לילית עם קווי גובה זוהרים">
+  </div>
+
+  <!-- Scrim Overlay -->
+  <div class="index-hero-scrim" aria-hidden="true"></div>
+
+  <!-- Decorative: satellite glow motif (top-right) -->
+  <div class="index-hero-glow-motif" aria-hidden="true"></div>
+
+  <!-- Decorative: Israel outline SVG -->
+  <svg class="index-hero-map-outline" data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 180 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M90,12 C78,18 62,24 54,36 C46,48 44,60 40,72 C36,84 28,90 26,104 C24,118 30,128 28,140 C26,152 18,160 20,174 C22,188 34,196 38,210 C42,224 36,238 42,250 C48,262 62,268 68,280 C74,292 72,304 80,312 C84,316 88,318 90,320 C92,318 96,316 100,312 C108,304 106,292 112,280 C118,268 132,262 138,250 C144,238 138,224 142,210 C146,196 158,188 160,174 C162,160 154,152 152,140 C150,128 156,118 154,104 C152,90 144,84 140,72 C136,60 134,48 126,36 C118,24 102,18 90,12 Z" stroke="var(--primary)" stroke-width="1.5" fill="none" opacity="0.35"></path>
+    <circle cx="90" cy="160" r="3" fill="var(--accent)" opacity="0.6"></circle>
+    <circle cx="72" cy="200" r="2" fill="var(--primary)" opacity="0.5"></circle>
+    <circle cx="108" cy="130" r="2" fill="var(--secondary)" opacity="0.4"></circle>
+    <circle cx="85" cy="240" r="2.5" fill="var(--accent)" opacity="0.5"></circle>
+  </svg>
+
+  <!-- Content Overlay -->
+  <div class="index-hero-container">
+    <div class="index-hero-content">
+
+      <!-- Eyebrow label -->
+      <div class="index-hero-eyebrow">
+        <span class="index-hero-eyebrow-line" aria-hidden="true"></span>
+        <span class="index-hero-eyebrow-text">אטלס ישראל הפרמיום</span>
+      </div>
+
+      <!-- H1 -->
+      <h1 class="index-hero-h1">מפות של ישראל<br><span class="index-hero-h1-accent">בדיוק שאתם צריכים</span></h1>
+
+      <!-- H3 subtitle -->
+      <h3 class="index-hero-subtitle">גלו את ישראל לעומק — מסלולי טיול, גיאוגרפיה אזורית, השראה לטיולים ולחינוך. מפות מקצועיות לכל מטרה.</h3>
+
+      <!-- CTA Buttons -->
+      <div class="index-hero-ctas">
+        <a href="#collections" class="index-hero-btn-primary">
+          <i class="fas fa-map" aria-hidden="true"></i>
+          <span>גלו את האוסף</span>
+        </a>
+        <a href="#contact" class="index-hero-btn-secondary">
+          <i class="fas fa-compass" aria-hidden="true"></i>
+          <span>בקשו מפה מותאמת</span>
+        </a>
+      </div>
+
+      <!-- Trust phrases -->
+      <div class="index-hero-trust">
+        <span class="index-hero-trust-item">
+          <i class="fas fa-mountain" aria-hidden="true"></i>
+          מסלולי שביל ישראל
+        </span>
+        <span class="index-hero-trust-divider" aria-hidden="true"></span>
+        <span class="index-hero-trust-item">
+          <i class="fas fa-graduation-cap" aria-hidden="true"></i>
+          שימוש חינוכי
+        </span>
+        <span class="index-hero-trust-divider" aria-hidden="true"></span>
+        <span class="index-hero-trust-item">
+          <i class="fas fa-map-marked-alt" aria-hidden="true"></i>
+          כל אזורי הארץ
+        </span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Bottom Divider: topographic contour fade -->
+  <div class="index-hero-divider-wrapper">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 1440 90" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Cyan contour accent lines -->
+      <path d="M0,55 Q120,48 240,54 T480,50 Q600,46 720,52 T960,48 Q1080,44 1200,50 T1440,47" stroke="rgba(0,212,255,0.18)" stroke-width="1" fill="#050A0F"></path>
+      <path d="M0,62 Q180,56 360,63 T720,58 Q900,54 1080,61 T1440,57" stroke="rgba(0,212,255,0.10)" stroke-width="1" fill="#050A0F"></path>
+      <path d="M0,70 Q200,64 400,71 T800,66 Q1000,62 1200,69 T1440,65" stroke="rgba(0,212,255,0.06)" stroke-width="1" fill="#050A0F"></path>
+      <!-- Fill bottom to next section -->
+      <path d="M0,90 L0,52 Q180,44 360,51 T720,46 Q900,42 1080,49 T1440,44 L1440,90 Z" fill="#050A0F"></path>
+    </svg>
+  </div>
+
+</section>
+
+<section data-band-index="1" id="features" class="index-features-section" data-layout-spec="בית-features" dir="rtl">
+  <!-- Topographic texture overlay -->
+  <div class="index-features-topo-overlay" aria-hidden="true"></div>
+
+  <!-- Centered intro block -->
+  <div class="index-features-container">
+    <div class="index-features-intro">
+      <div class="index-features-label-line" aria-hidden="true"></div>
+      <span class="index-features-eyebrow">מה תמצאו אצלנו</span>
+      <h2 class="index-features-heading">מפות ישראל — חקרו כל פינה בארץ</h2>
+      <p class="index-features-subtext">אוסף מקצועי של מפות ישראל לכל מטרה — ממסלולי טיול בטבע ועד מפות גיאוגרפיות חינוכיות. כל מפה מתוכננת לעזור לכם לגלות שטחים, להבין אזורים ולתכנן מסעות בביטחון מלא.</p>
+    </div>
+
+    <!-- 3-column feature grid -->
+    <div class="index-features-grid">
+
+      <!-- Card 1 -->
+      <article class="index-features-card">
+        <div class="index-features-card-topo" aria-hidden="true"></div>
+        <div class="index-features-card-israel-outline" aria-hidden="true">
+          <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 80 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M40,8 L55,14 L62,22 L60,34 L68,42 L66,54 L58,60 L60,72 L52,82 L48,96 L40,112 L32,96 L28,82 L20,72 L22,60 L14,54 L12,42 L20,34 L18,22 L25,14 Z" stroke="#00D4FF" stroke-width="1.2" fill="none" opacity="0.35"></path>
+          </svg>
+        </div>
+        <div class="index-features-card-icon">
+          <svg data-element-type="icon" data-icon-type="svg" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" width="40" height="40">
+            <circle cx="24" cy="24" r="18" stroke="#00D4FF" stroke-width="1.5" opacity="0.4"></circle>
+            <circle cx="24" cy="24" r="10" stroke="#00D4FF" stroke-width="1.5"></circle>
+            <line x1="24" y1="6" x2="24" y2="14" stroke="#00D4FF" stroke-width="1.5" stroke-linecap="round"></line>
+            <line x1="24" y1="34" x2="24" y2="42" stroke="#00D4FF" stroke-width="1.5" stroke-linecap="round"></line>
+            <line x1="6" y1="24" x2="14" y2="24" stroke="#00D4FF" stroke-width="1.5" stroke-linecap="round"></line>
+            <line x1="34" y1="24" x2="42" y2="24" stroke="#00D4FF" stroke-width="1.5" stroke-linecap="round"></line>
+            <circle cx="24" cy="24" r="2.5" fill="#00D4FF"></circle>
+            <path d="M24,18 L26,22 L24,26 L22,22 Z" fill="#00D4FF" opacity="0.6"></path>
+          </svg>
+        </div>
+        <div class="index-features-card-content">
+          <h3 class="index-features-card-title">מפות אזוריות של ישראל</h3>
+          <p class="index-features-card-text">מפות מפורטות של כל אזורי הארץ — הצפון, הדרום, מרכז הארץ וירושלים. כל מפה כוללת שכבות מידע גיאוגרפי מדויק שיעזרו לכם להבין את המרחב הישראלי לעומק.</p>
+          <div class="index-features-card-accent-line" aria-hidden="true"></div>
+        </div>
+      </article>
+
+      <!-- Card 2 (center - raised) -->
+      <article class="index-features-card index-features-card--center">
+        <div class="index-features-card-topo" aria-hidden="true"></div>
+        <div class="index-features-card-israel-outline" aria-hidden="true">
+          <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 80 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M40,8 L55,14 L62,22 L60,34 L68,42 L66,54 L58,60 L60,72 L52,82 L48,96 L40,112 L32,96 L28,82 L20,72 L22,60 L14,54 L12,42 L20,34 L18,22 L25,14 Z" stroke="#00D4FF" stroke-width="1.2" fill="none" opacity="0.35"></path>
+          </svg>
+        </div>
+        <div class="index-features-card-icon">
+          <svg data-element-type="icon" data-icon-type="svg" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" width="40" height="40">
+            <path d="M8,36 Q14,28 20,32 Q26,36 32,24 Q38,12 44,18" stroke="#FFC857" stroke-width="1.8" stroke-linecap="round" fill="none"></path>
+            <path d="M8,40 Q14,32 20,36 Q26,40 32,28 Q38,16 44,22" stroke="#FFC857" stroke-width="1" stroke-linecap="round" fill="none" opacity="0.4"></path>
+            <circle cx="20" cy="32" r="2.5" fill="#FFC857"></circle>
+            <circle cx="32" cy="24" r="2.5" fill="#FFC857"></circle>
+            <path d="M12,12 L16,8 L20,12 L16,16 Z" stroke="#FFC857" stroke-width="1.5" fill="none"></path>
+            <line x1="16" y1="8" x2="16" y2="4" stroke="#FFC857" stroke-width="1.5" stroke-linecap="round"></line>
+            <line x1="16" y1="28" x2="16" y2="24" stroke="#FFC857" stroke-width="1.5" stroke-linecap="round"></line>
+            <line x1="8" y1="16" x2="4" y2="16" stroke="#FFC857" stroke-width="1.5" stroke-linecap="round"></line>
+            <line x1="28" y1="16" x2="24" y2="16" stroke="#FFC857" stroke-width="1.5" stroke-linecap="round"></line>
+          </svg>
+        </div>
+        <div class="index-features-card-content">
+          <h3 class="index-features-card-title">מסלולי טיול ושבילי ישראל</h3>
+          <p class="index-features-card-text">אוסף מקיף של מפות שבילים, ניווט בטבע ומסלולי טיול בכל רחבי הארץ. מהשביל הישראלי ועד נחלים נסתרים — תכננו את ההרפתקה הבאה שלכם עם מידע שטח מדויק.</p>
+          <div class="index-features-card-accent-line index-features-card-accent-line--gold" aria-hidden="true"></div>
+        </div>
+        <div class="index-features-card-glow" aria-hidden="true"></div>
+      </article>
+
+      <!-- Card 3 -->
+      <article class="index-features-card">
+        <div class="index-features-card-topo" aria-hidden="true"></div>
+        <div class="index-features-card-israel-outline" aria-hidden="true">
+          <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 80 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M40,8 L55,14 L62,22 L60,34 L68,42 L66,54 L58,60 L60,72 L52,82 L48,96 L40,112 L32,96 L28,82 L20,72 L22,60 L14,54 L12,42 L20,34 L18,22 L25,14 Z" stroke="#00D4FF" stroke-width="1.2" fill="none" opacity="0.35"></path>
+          </svg>
+        </div>
+        <div class="index-features-card-icon">
+          <svg data-element-type="icon" data-icon-type="svg" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" width="40" height="40">
+            <rect x="8" y="10" width="32" height="28" rx="2" stroke="#FF4FA3" stroke-width="1.5" fill="none"></rect>
+            <line x1="8" y1="18" x2="40" y2="18" stroke="#FF4FA3" stroke-width="1" opacity="0.5"></line>
+            <line x1="8" y1="26" x2="40" y2="26" stroke="#FF4FA3" stroke-width="1" opacity="0.5"></line>
+            <line x1="20" y1="10" x2="20" y2="38" stroke="#FF4FA3" stroke-width="1" opacity="0.5"></line>
+            <line x1="30" y1="10" x2="30" y2="38" stroke="#FF4FA3" stroke-width="1" opacity="0.5"></line>
+            <circle cx="24" cy="24" r="4" stroke="#FF4FA3" stroke-width="1.5" fill="none"></circle>
+            <circle cx="24" cy="24" r="1.5" fill="#FF4FA3"></circle>
+            <path d="M14,14 L17,17" stroke="#FF4FA3" stroke-width="1.2" stroke-linecap="round"></path>
+            <path d="M34,14 L31,17" stroke="#FF4FA3" stroke-width="1.2" stroke-linecap="round"></path>
+          </svg>
+        </div>
+        <div class="index-features-card-content">
+          <h3 class="index-features-card-title">מפות גיאוגרפיה חינוכיות</h3>
+          <p class="index-features-card-text">סדרת מפות לימודיות לתלמידים ולמורים — ממפות פיזיות של ישראל ועד מפות מדיניות ואקלים. כלי עזר מושלמים להוראת גיאוגרפיה בצורה ויזואלית וברורה.</p>
+          <div class="index-features-card-accent-line index-features-card-accent-line--pink" aria-hidden="true"></div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+
+  <!-- Bottom diagonal divider -->
+  <div class="index-features-divider-wrapper">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 1440 90" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="feat-divider-glow" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#0D1520"></stop>
+          <stop offset="40%" stop-color="#0D1520"></stop>
+          <stop offset="60%" stop-color="rgba(0,212,255,0.08)"></stop>
+          <stop offset="100%" stop-color="#0D1520"></stop>
+        </linearGradient>
+      </defs>
+      <path d="M0,90 L0,55 L480,20 L960,50 L1440,10 L1440,90 Z" fill="var(--bg-light)"></path>
+      <path d="M0,90 L0,58 L480,23 L960,53 L1440,13 L1440,90 Z" fill="var(--bg-light)"></path>
+      <line x1="0" y1="58" x2="480" y2="23" stroke="rgba(0,212,255,0.25)" stroke-width="1"></line>
+      <line x1="480" y1="23" x2="960" y2="53" stroke="rgba(0,212,255,0.15)" stroke-width="1"></line>
+      <line x1="960" y1="53" x2="1440" y2="13" stroke="rgba(0,212,255,0.25)" stroke-width="1"></line>
+    </svg>
+  </div>
+</section>
+
+<section data-band-index="2" id="showcase" class="index-showcase-section" data-layout-spec="בית-showcase" dir="rtl">
+  <div class="showcase-container">
+    <!-- Section Header -->
+    <div class="showcase-header">
+      <div class="showcase-header-accent" aria-hidden="true"></div>
+      <h2 class="showcase-title">מפות ישראל — מכל זווית ומכל נקודה</h2>
+      <p class="showcase-subtitle">מהצפון הירוק ועד מדבר הנגב, ממרכזי הערים ועד שבילי הטבע — אוסף מפות ישראל שלנו מכסה כל פינה של הארץ בדיוק גיאוגרפי ובאיכות עריכה גבוהה.</p>
+    </div>
+
+    <!-- Asymmetric Map Grid -->
+    <div class="showcase-grid">
+
+      <!-- Row 1: Large tile (start/right) + Two stacked tiles (end/left) -->
+      <div class="showcase-tile tile-large">
+        <figure class="tile-figure">
+          <img loading="lazy" decoding="async" data-placeholder="index-showcase-image-1" data-context="High-end GIS-inspired dark atlas map of northern Israel showing the Galilee region, Golan Heights, Sea of Galilee, with glowing cyan contour lines, topographic elevation layers, city markers, and route overlays on a deep navy-black background. Premium cartographic style, night mode, ultra detailed." width="700" height="520" src="/assets/site-index-showcase-image-1.webp" alt="מפת צפון ישראל — הגליל והגולן">
+        </figure>
+        <div class="tile-overlay">
+          <span class="tile-badge">צפון ישראל</span>
+          <h3 class="tile-name">הגליל, הגולן וסביבותיהם</h3>
+          <p class="tile-desc">מפת טופוגרפיה מפורטת של אזורי הצפון, כולל נתיבי טיול ומוקדי עניין</p>
+        </div>
+        <!-- Translucent backplate peeking from bottom-end corner -->
+        <div class="tile-backplate" aria-hidden="true"></div>
+      </div>
+
+      <!-- Two stacked tiles on the end (left) side -->
+      <div class="showcase-stack">
+        <div class="showcase-tile tile-small">
+          <figure class="tile-figure">
+            <img loading="lazy" decoding="async" data-placeholder="index-showcase-image-2" data-context="Premium dark atlas map of the Negev desert and Ramon Crater (Makhtesh Ramon) in Israel, showing dramatic terrain elevation, wadi networks, crater rim contours, glowing cyan topographic lines on deep dark background. Night mode GIS-style cartographic render, ultra detailed." width="340" height="240" src="/assets/site-index-showcase-image-2.webp" alt="מפת מדבר הנגב והמכתש רמון">
+          </figure>
+          <div class="tile-overlay">
+            <span class="tile-badge">דרום</span>
+            <h3 class="tile-name">מדבר הנגב והמכתש</h3>
+            <p class="tile-desc">שטחי המדבר, מכתש רמון ושבילי הנגב</p>
+          </div>
+        </div>
+
+        <div class="showcase-tile tile-small">
+          <figure class="tile-figure">
+            <img loading="lazy" decoding="async" data-placeholder="index-showcase-image-3" data-context="High-resolution dark city orientation map of Tel Aviv and central Israel, showing district boundaries, major roads, urban grid, coastal line, glowing cyan street network on a near-black background. Cinematic night-mode GIS atlas style, editorial quality." width="340" height="240" src="/assets/site-index-showcase-image-3.webp" alt="מפת מרכז ישראל — תל אביב ואזור השרון">
+          </figure>
+          <div class="tile-overlay">
+            <span class="tile-badge">מרכז</span>
+            <h3 class="tile-name">תל אביב ואזור השרון</h3>
+            <p class="tile-desc">מפת אוריינטציה עירונית עם גבולות שכונות ורחובות ראשיים</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 2: Wide tile spanning full width -->
+      <div class="showcase-tile tile-wide">
+        <figure class="tile-figure">
+          <img loading="lazy" decoding="async" data-placeholder="index-showcase-image-4" data-context="Wide panoramic dark atlas trail map of Israel showing long-distance hiking routes including the Israel National Trail (shvil israel), with marked waypoints, terrain elevation shading, nature reserves, and glowing route lines on a deep dark cartographic background. Night mode, premium GIS editorial style." width="1060" height="320" src="/assets/site-index-showcase-image-4.webp" alt="מפת שבילי הטיול הארצי — ישראל">
+        </figure>
+        <div class="tile-overlay">
+          <span class="tile-badge">שבילים ארציים</span>
+          <h3 class="tile-name">שביל ישראל ומסלולי טיול מסומנים</h3>
+          <p class="tile-desc">מפה פנורמית של מסלולי הטיול הארציים, שמורות הטבע ונקודות הציון לאורך כל הארץ</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Bottom wave divider transitioning to dark section -->
+  <div class="showcase-divider-wrapper">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 1440 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,80 L0,44 Q60,28 120,40 T240,32 Q300,44 360,36 T480,40 Q540,28 600,36 T720,32 Q780,44 840,36 T960,40 Q1020,28 1080,38 T1200,32 Q1260,44 1320,36 T1440,40 L1440,80 Z" fill="#050A0F"></path>
+    </svg>
+  </div>
+</section>
+
+<section data-band-index="3" id="benefits" class="index-benefits-section" data-layout-spec="בית-benefits" dir="rtl">
+  <!-- Topographic texture overlay -->
+  <div class="ibs-topo-overlay" aria-hidden="true"></div>
+
+  <div class="ibs-container">
+    <div class="ibs-grid">
+
+      <!-- START (Right) Column: Content -->
+      <div class="ibs-content-col">
+        <!-- Neon accent line -->
+        <div class="ibs-accent-line" aria-hidden="true"></div>
+
+        <h2 class="ibs-heading">מדוע <span class="ibs-heading-accent">מפות ישראל</span><br>משנות את הדרך שבה אתם רואים את הארץ</h2>
+
+        <p class="ibs-lead">מפות של ישראל אינן רק כלי ניווט — הן שפה ויזואלית שמפיחה חיים בנוף, במסלולים ובהיסטוריה. בין אם אתם מתכננים טיול, יוצאים לשביל, או מלמדים גאוגרפיה — מפה טובה הופכת את הבלתי מוכר למובן.</p>
+
+        <div class="ibs-benefits-list">
+          <!-- Benefit 1 -->
+          <div class="ibs-benefit-item">
+            <div class="ibs-benefit-icon-wrap">
+              <svg data-element-type="icon" data-icon-type="svg" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <circle cx="14" cy="14" r="13" stroke="var(--primary)" stroke-width="1.5" stroke-dasharray="3 2" opacity="0.5"></circle>
+                <path d="M8 14 Q11 9 14 14 Q17 19 20 14" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" fill="none"></path>
+                <circle cx="14" cy="14" r="2.5" fill="var(--primary)"></circle>
+              </svg>
+            </div>
+            <div class="ibs-benefit-text">
+              <h3 class="ibs-benefit-title">תכנון טיולים חכם לתיירים</h3>
+              <p class="ibs-benefit-desc">מפות מפורטות של ישראל מאפשרות לתיירים לתכנן מסלולים בביטחון — מהכנרת ועד הנגב, מהחוף המערבי ועד הגבול המזרחי. כל נקודת עניין, כביש ומוצב גבול מסומנים בבהירות.</p>
+            </div>
+          </div>
+
+          <!-- Benefit 2 -->
+          <div class="ibs-benefit-item">
+            <div class="ibs-benefit-icon-wrap">
+              <svg data-element-type="icon" data-icon-type="svg" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M6 22 L10 12 L14 17 L18 8 L22 14" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"></path>
+                <path d="M4 24 L24 24" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" opacity="0.5"></path>
+                <circle cx="18" cy="8" r="2" fill="var(--accent)"></circle>
+              </svg>
+            </div>
+            <div class="ibs-benefit-text">
+              <h3 class="ibs-benefit-title">הכוונת מסלולים לטיולי שטח</h3>
+              <p class="ibs-benefit-desc">פרופיל הגובה, קווי הגובה ומרקם השטח מוצגים בצורה שמאפשרת לכל מטייל להבין את האתגר שלפניו. מהרי יהודה ועד שמורות הנגב — הטופוגרפיה מדברת בעצמה.</p>
+            </div>
+          </div>
+
+          <!-- Benefit 3 -->
+          <div class="ibs-benefit-item">
+            <div class="ibs-benefit-icon-wrap">
+              <svg data-element-type="icon" data-icon-type="svg" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <rect x="5" y="6" width="18" height="14" rx="2" stroke="var(--secondary)" stroke-width="1.5" fill="none"></rect>
+                <path d="M9 10 L19 10 M9 13 L16 13 M9 16 L13 16" stroke="var(--secondary)" stroke-width="1.5" stroke-linecap="round"></path>
+                <circle cx="21" cy="8" r="3" fill="var(--secondary)" opacity="0.7"></circle>
+              </svg>
+            </div>
+            <div class="ibs-benefit-text">
+              <h3 class="ibs-benefit-title">כלי הוראה ויזואלי לבתי ספר ומוסדות</h3>
+              <p class="ibs-benefit-desc">מפות גאוגרפיות ברורות הן עמוד השדרה של כל שיעור גאוגרפיה. מפות ישראל איכותיות מסייעות למורים להנגיש אזורים, גבולות ואקלים בצורה שסטודנטים מבינים ומזכירים לאורך זמן.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- END (Left) Column: Imagery -->
+      <div class="ibs-image-col">
+        <div class="ibs-image-wrapper">
+          <img loading="lazy" decoding="async" data-placeholder="index-benefits-image-1" data-context="Tall vertical glowing elevation profile map of Israel terrain in dark night mode — topographic contour lines glowing in cyan and teal against a deep navy-black background, showing mountain ridges, valleys, and coastal plains from north to south. The map has a premium atlas aesthetic with luminous gradient lines, subtle gold highlights on peaks, and a cinematic cartographic style. Aspect ratio approximately 2:3 portrait." width="480" height="720" src="/assets/site-index-benefits-image-1.webp" alt="מפת פרופיל גובה של ישראל עם קווי טופוגרפיה זוהרים" class="ibs-main-image">
+
+          <!-- Peeking data tile -->
+          <div class="ibs-data-tile">
+            <img loading="lazy" decoding="async" data-placeholder="index-benefits-image-2" data-context="Small close-up detail of a regional terrain map of Israel showing the Jordan Valley and Dead Sea area, with elevation data labels, contour lines in cyan, and geographic coordinate markers. Dark background with glowing data overlays in a minimal cartographic dashboard style." width="200" height="130" src="/assets/site-index-benefits-image-2.webp" alt="מפת אזור בקעת הירדן וים המלח עם נתוני גובה" class="ibs-peek-image">
+            <div class="ibs-data-tile-label">
+              <span class="ibs-data-tile-stat">1,424 מ׳</span>
+              <small class="ibs-data-tile-caption">הר מירון — פסגת ישראל</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Bottom divider: luminous contour fragments -->
+  <div class="ibs-divider-wrapper">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 1440 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Contour fragment lines -->
+      <line x1="80" y1="28" x2="160" y2="28" stroke="rgba(0,212,255,0.3)" stroke-width="1" stroke-dasharray="4 6"></line>
+      <line x1="300" y1="22" x2="420" y2="22" stroke="rgba(0,212,255,0.2)" stroke-width="1" stroke-dasharray="6 8"></line>
+      <line x1="560" y1="30" x2="680" y2="30" stroke="rgba(0,212,255,0.25)" stroke-width="1" stroke-dasharray="3 5"></line>
+      <line x1="800" y1="20" x2="960" y2="20" stroke="rgba(0,212,255,0.15)" stroke-width="1" stroke-dasharray="5 7"></line>
+      <line x1="1080" y1="26" x2="1220" y2="26" stroke="rgba(0,212,255,0.2)" stroke-width="1" stroke-dasharray="4 6"></line>
+      <!-- Main fill path: fills bottom toward next section -->
+      <path d="M0,60 L0,38 Q60,32 120,36 T240,34 Q320,38 400,30 T560,36 Q640,32 720,38 T880,30 Q960,36 1040,32 T1200,36 Q1300,30 1360,34 L1440,36 L1440,60 Z" fill="#0D1520"></path>
+    </svg>
+  </div>
+</section>
+
+<section data-band-index="4" id="testimonials" class="index-testimonials-section" data-layout-spec="בית-testimonials" dir="rtl">
+  <!-- Topographic texture overlay -->
+  <div class="index-testimonials-section__topo-overlay" aria-hidden="true"></div>
+
+  <!-- Section Header -->
+  <div class="index-testimonials-section__container">
+    <div class="index-testimonials-section__header">
+      <div class="index-testimonials-section__eyebrow">
+        <span class="index-testimonials-section__accent-line" aria-hidden="true"></span>
+        <span class="index-testimonials-section__eyebrow-text">מה אומרים עלינו</span>
+      </div>
+      <h2 class="index-testimonials-section__title">מפות ישראל שמשנות את חוויית הניווט</h2>
+      <p class="index-testimonials-section__subtitle">אלפי גולשים, מטיילים וגורמי חינוך בוחרים במפות ישראל כמקור המהימן ביותר לחקר הארץ — מהגליל ועד הנגב.</p>
+    </div>
+
+    <!-- Testimonial Cards Grid -->
+    <div class="index-testimonials-section__grid">
+
+      <!-- Card 1: Traveler -->
+      <article class="index-testimonials-section__card">
+        <div class="index-testimonials-section__card-glow" aria-hidden="true"></div>
+        <div class="index-testimonials-section__quote-icon" aria-hidden="true">
+          <svg data-no-icon-edit="true" aria-hidden="true" width="28" height="20" viewBox="0 0 28 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 20V12.4C0 9.06667 0.8 6.26667 2.4 4C4.05333 1.73333 6.4 0.266667 9.44 0L10.56 2.08C8.53333 2.56 7.01333 3.49333 6 4.88C5.04 6.21333 4.56 7.76 4.56 9.52H9.6V20H0ZM17.6 20V12.4C17.6 9.06667 18.4 6.26667 20 4C21.6533 1.73333 24 0.266667 27.04 0L28 2.08C25.9733 2.56 24.4533 3.49333 23.44 4.88C22.48 6.21333 22 7.76 22 9.52H27.04V20H17.6Z" fill="currentColor"></path>
+          </svg>
+        </div>
+        <h3 class="index-testimonials-section__card-audience">מטיילת בארץ</h3>
+        <p class="index-testimonials-section__card-quote">השתמשתי במפות ישראל לתכנון מסלול טיול בן שבועיים בכל רחבי הארץ. הפירוט הגיאוגרפי מדהים — כל שביל, כל ואדי, כל נקודת תצפית מסומנת בבהירות. הרגשתי בטוחה לגמרי בכל שלב.</p>
+        <div class="index-testimonials-section__card-author">
+          <div class="index-testimonials-section__author-avatar" aria-hidden="true">
+            <svg data-no-icon-edit="true" aria-hidden="true" width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="18" cy="18" r="18" fill="rgba(0,212,255,0.1)"></circle>
+              <circle cx="18" cy="14" r="6" fill="rgba(0,212,255,0.4)"></circle>
+              <path d="M6 30c0-6.627 5.373-10 12-10s12 3.373 12 10" fill="rgba(0,212,255,0.4)"></path>
+            </svg>
+          </div>
+          <div class="index-testimonials-section__author-info">
+            <span class="index-testimonials-section__author-name">מיכל לוי</span>
+            <span class="index-testimonials-section__author-role">מטיילת עצמאית, תל אביב</span>
+          </div>
+        </div>
+        <div class="index-testimonials-section__stars" aria-label="דירוג 5 מתוך 5 כוכבים">
+          <span aria-hidden="true">★★★★★</span>
+        </div>
+      </article>
+
+      <!-- Card 2: Hiking Enthusiast -->
+      <article class="index-testimonials-section__card">
+        <div class="index-testimonials-section__card-glow index-testimonials-section__card-glow--secondary" aria-hidden="true"></div>
+        <div class="index-testimonials-section__quote-icon" aria-hidden="true">
+          <svg data-no-icon-edit="true" aria-hidden="true" width="28" height="20" viewBox="0 0 28 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 20V12.4C0 9.06667 0.8 6.26667 2.4 4C4.05333 1.73333 6.4 0.266667 9.44 0L10.56 2.08C8.53333 2.56 7.01333 3.49333 6 4.88C5.04 6.21333 4.56 7.76 4.56 9.52H9.6V20H0ZM17.6 20V12.4C17.6 9.06667 18.4 6.26667 20 4C21.6533 1.73333 24 0.266667 27.04 0L28 2.08C25.9733 2.56 24.4533 3.49333 23.44 4.88C22.48 6.21333 22 7.76 22 9.52H27.04V20H17.6Z" fill="currentColor"></path>
+          </svg>
+        </div>
+        <h3 class="index-testimonials-section__card-audience">חובב טיולי שטח</h3>
+        <p class="index-testimonials-section__card-quote">כמי שמטייל בשבילי ישראל כל סוף שבוע, לא ידעתי שמפה יכולה להיות כל כך מדויקת. קווי הגובה, סימוני הקושי, ונקודות המים — הכל במקום. זאת המפה הכי טובה שהיתה לי ביד.</p>
+        <div class="index-testimonials-section__card-author">
+          <div class="index-testimonials-section__author-avatar" aria-hidden="true">
+            <svg data-no-icon-edit="true" aria-hidden="true" width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="18" cy="18" r="18" fill="rgba(255,200,87,0.1)"></circle>
+              <circle cx="18" cy="14" r="6" fill="rgba(255,200,87,0.4)"></circle>
+              <path d="M6 30c0-6.627 5.373-10 12-10s12 3.373 12 10" fill="rgba(255,200,87,0.4)"></path>
+            </svg>
+          </div>
+          <div class="index-testimonials-section__author-info">
+            <span class="index-testimonials-section__author-name">אורי בן-דוד</span>
+            <span class="index-testimonials-section__author-role">מדריך טיולים, ירושלים</span>
+          </div>
+        </div>
+        <div class="index-testimonials-section__stars" aria-label="דירוג 5 מתוך 5 כוכבים">
+          <span aria-hidden="true">★★★★★</span>
+        </div>
+      </article>
+
+      <!-- Card 3: Educational Org -->
+      <article class="index-testimonials-section__card">
+        <div class="index-testimonials-section__card-glow index-testimonials-section__card-glow--accent" aria-hidden="true"></div>
+        <div class="index-testimonials-section__quote-icon" aria-hidden="true">
+          <svg data-no-icon-edit="true" aria-hidden="true" width="28" height="20" viewBox="0 0 28 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 20V12.4C0 9.06667 0.8 6.26667 2.4 4C4.05333 1.73333 6.4 0.266667 9.44 0L10.56 2.08C8.53333 2.56 7.01333 3.49333 6 4.88C5.04 6.21333 4.56 7.76 4.56 9.52H9.6V20H0ZM17.6 20V12.4C17.6 9.06667 18.4 6.26667 20 4C21.6533 1.73333 24 0.266667 27.04 0L28 2.08C25.9733 2.56 24.4533 3.49333 23.44 4.88C22.48 6.21333 22 7.76 22 9.52H27.04V20H17.6Z" fill="currentColor"></path>
+          </svg>
+        </div>
+        <h3 class="index-testimonials-section__card-audience">ארגון חינוכי</h3>
+        <p class="index-testimonials-section__card-quote">הטמענו את מפות ישראל בתוכנית הלימודים שלנו לגיאוגרפיה. התלמידים מתחברים מיד לחומר — הויזואליות ברורה, הנתונים מדויקים, והממשק מאפשר חקר עצמאי שלא ראינו בשום כלי אחר.</p>
+        <div class="index-testimonials-section__card-author">
+          <div class="index-testimonials-section__author-avatar" aria-hidden="true">
+            <svg data-no-icon-edit="true" aria-hidden="true" width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="18" cy="18" r="18" fill="rgba(255,79,163,0.1)"></circle>
+              <circle cx="18" cy="14" r="6" fill="rgba(255,79,163,0.4)"></circle>
+              <path d="M6 30c0-6.627 5.373-10 12-10s12 3.373 12 10" fill="rgba(255,79,163,0.4)"></path>
+            </svg>
+          </div>
+          <div class="index-testimonials-section__author-info">
+            <span class="index-testimonials-section__author-name">ד"ר רחל שמיר</span>
+            <span class="index-testimonials-section__author-role">רכזת גיאוגרפיה, בית ספר אזורי</span>
+          </div>
+        </div>
+        <div class="index-testimonials-section__stars" aria-label="דירוג 5 מתוך 5 כוכבים">
+          <span aria-hidden="true">★★★★★</span>
+        </div>
+      </article>
+
+    </div>
+
+    <!-- Trust Labels Row -->
+    <div class="index-testimonials-section__trust-row" role="list" aria-label="תחומי שימוש">
+      <span class="index-testimonials-section__trust-chip" role="listitem">✦ טיולים ומסלולים</span>
+      <span class="index-testimonials-section__trust-chip" role="listitem">✦ חינוך וגיאוגרפיה</span>
+      <span class="index-testimonials-section__trust-chip" role="listitem">✦ תכנון עירוני</span>
+      <span class="index-testimonials-section__trust-chip" role="listitem">✦ תיירות ונסיעות</span>
+      <span class="index-testimonials-section__trust-chip" role="listitem">✦ מחקר אקדמי</span>
+      <span class="index-testimonials-section__trust-chip" role="listitem">✦ ניווט שטחי</span>
+    </div>
+  </div>
+
+  <!-- Bottom Divider: gradient fade with gold point markers -->
+  <div class="index-testimonials-section__divider-wrapper">
+    <div class="index-testimonials-section__gold-markers" aria-hidden="true">
+      <span class="index-testimonials-section__gold-dot"></span>
+      <span class="index-testimonials-section__gold-dot"></span>
+      <span class="index-testimonials-section__gold-dot"></span>
+      <span class="index-testimonials-section__gold-dot"></span>
+      <span class="index-testimonials-section__gold-dot"></span>
+    </div>
+    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 1280 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="divGradTestimonials" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#050A0F" stop-opacity="0"></stop>
+          <stop offset="100%" stop-color="#050A0F" stop-opacity="1"></stop>
+        </linearGradient>
+      </defs>
+      <path d="M0,80 L0,20 Q160,8 320,18 T640,12 Q800,6 960,16 T1280,10 L1280,80 Z" fill="#0D1520"></path>
+      <rect x="0" y="0" width="1280" height="80" fill="url(#divGradTestimonials)"></rect>
+    </svg>
+  </div>
+
+</section>
+
+<section data-band-index="5" id="stats" class="index-stats-section" data-layout-spec="בית-stats" dir="rtl">
+  <!-- Topographic mesh background -->
+  <div class="index-stats-topo-bg" aria-hidden="true">
+    <svg data-no-icon-edit="true" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 1200 400">
+      <g fill="none" stroke="rgba(0,212,255,0.05)" stroke-width="1">
+        <path d="M0,200 Q150,160 300,200 T600,190 T900,205 T1200,195"></path>
+        <path d="M0,220 Q150,180 300,220 T600,210 T900,225 T1200,215"></path>
+        <path d="M0,180 Q150,140 300,180 T600,170 T900,185 T1200,175"></path>
+        <path d="M0,240 Q200,200 400,240 T800,230 T1200,240"></path>
+        <path d="M0,160 Q200,120 400,160 T800,150 T1200,160"></path>
+        <path d="M0,260 Q250,230 500,260 T1000,255 T1200,260"></path>
+        <path d="M0,140 Q250,110 500,140 T1000,135 T1200,140"></path>
+        <path d="M0,280 Q300,250 600,280 T1200,275"></path>
+        <path d="M0,120 Q300,90 600,120 T1200,115"></path>
+        <path d="M0,300 Q350,270 700,300 T1200,295"></path>
+        <path d="M0,100 Q350,70 700,100 T1200,95"></path>
+        <path d="M100,0 Q130,100 100,200 T110,400"></path>
+        <path d="M300,0 Q330,100 300,200 T310,400"></path>
+        <path d="M500,0 Q530,100 500,200 T510,400"></path>
+        <path d="M700,0 Q730,100 700,200 T710,400"></path>
+        <path d="M900,0 Q930,100 900,200 T910,400"></path>
+        <path d="M1100,0 Q1130,100 1100,200 T1110,400"></path>
+      </g>
+    </svg>
+  </div>
+
+  <div class="index-stats-container">
+    <!-- Section header -->
+    <div class="index-stats-header">
+      <span class="index-stats-eyebrow">מפות ישראל במספרים</span>
+      <h2 class="index-stats-title">הנתונים שמדברים בעד עצמם</h2>
+      <p class="index-stats-subtitle">כיסוי גיאוגרפי מקיף, ארגון מדוקדק ובהירות ויזואלית ברמה הגבוהה ביותר</p>
+    </div>
+
+    <!-- Stats grid -->
+    <div class="index-stats-grid">
+
+      <article class="index-stats-card">
+        <div class="index-stats-separator" aria-hidden="true"></div>
+        <div class="index-stats-number-wrap">
+          <span class="index-stats-number">1,200+</span>
+          <span class="index-stats-unit">מפות</span>
+        </div>
+        <h3 class="index-stats-label">כיסוי אזורי מלא</h3>
+        <p class="index-stats-desc">מפות של ישראל בכל קנה מידה — מהמדינה כולה ועד לשכונה בודדת</p>
+      </article>
+
+      <article class="index-stats-card">
+        <div class="index-stats-separator" aria-hidden="true"></div>
+        <div class="index-stats-number-wrap">
+          <span class="index-stats-number">48</span>
+          <span class="index-stats-unit">קטגוריות</span>
+        </div>
+        <h3 class="index-stats-label">מסלולים ושבילים</h3>
+        <p class="index-stats-desc">מסלולי טיול, שבילים מסומנים, ניווט עירוני ומסלולי רכיבה מאורגנים לפי נושא</p>
+      </article>
+
+      <article class="index-stats-card">
+        <div class="index-stats-separator" aria-hidden="true"></div>
+        <div class="index-stats-number-wrap">
+          <span class="index-stats-number">30+</span>
+          <span class="index-stats-unit">שנות</span>
+        </div>
+        <h3 class="index-stats-label">ניסיון קרטוגרפי</h3>
+        <p class="index-stats-desc">עשורים של מומחיות גיאוגרפית ישראלית — לחינוך, תיירות ותכנון</p>
+      </article>
+
+      <article class="index-stats-card">
+        <div class="index-stats-separator" aria-hidden="true"></div>
+        <div class="index-stats-number-wrap">
+          <span class="index-stats-number">99%</span>
+          <span class="index-stats-unit">דיוק</span>
+        </div>
+        <h3 class="index-stats-label">בהירות ויזואלית</h3>
+        <p class="index-stats-desc">כל מפה עוברת בקרת איכות קפדנית לפני פרסום — כי הפרטים חשובים</p>
+      </article>
+
+    </div>
+  </div>
+
+  <!-- Bottom clip-path divider -->
+  <div class="index-stats-divider-wrapper">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 1200 90" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="stats-divider-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#00D4FF" stop-opacity="0.9"></stop>
+          <stop offset="50%" stop-color="#8B3FBF" stop-opacity="0.9"></stop>
+          <stop offset="100%" stop-color="#FF4FA3" stop-opacity="0.9"></stop>
+        </linearGradient>
+      </defs>
+      <!-- Accent line along the angled edge -->
+      <path d="M0,90 L0,70 L1200,20 L1200,90 Z" fill="var(--bg-light)"></path>
+      <path d="M0,70 L1200,20" stroke="url(#stats-divider-grad)" stroke-width="2.5" fill="var(--bg-light)"></path>
+    </svg>
+  </div>
+
+</section>
+
+<section data-band-index="6" id="cta" class="index-cta-section" data-layout-spec="בית-cta" dir="rtl">
+  <!-- Topographic pattern overlay -->
+  <div class="index-cta-topo-overlay" aria-hidden="true"></div>
+
+  <div class="index-cta-container">
+    <!-- Two-column main grid -->
+    <div class="index-cta-grid">
+
+      <!-- START column: persuasive content -->
+      <div class="index-cta-content">
+        <div class="index-cta-eyebrow">
+          <span class="index-cta-eyebrow-line" aria-hidden="true"></span>
+          <span class="index-cta-eyebrow-text">מפות ישראל</span>
+        </div>
+
+        <h2 class="index-cta-heading">מצאו את המפה הנכונה<br>לכל מסע ומטרה</h2>
+
+        <p class="index-cta-body">בין אם אתם מתכננים טיול שטח, מחפשים מפות ישראל לחינוך גיאוגרפי, או זקוקים לחומרי מיפוי מקצועיים לתיירות ונדל"ן — אנחנו כאן כדי להנחות אתכם לאוסף המדויק ביותר עבורכם.</p>
+
+        <ul class="index-cta-reassurance">
+          <li class="index-cta-reassurance-item">
+            <span class="index-cta-check" aria-hidden="true">
+              <svg data-element-type="icon" data-icon-type="svg" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="9" cy="9" r="9" fill="rgba(0,212,255,0.15)"></circle>
+                <path d="M5 9.5L7.5 12L13 6.5" stroke="#00D4FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+            </span>
+            <span>מומחיות גיאוגרפית מעמיקה של ארץ ישראל</span>
+          </li>
+          <li class="index-cta-reassurance-item">
+            <span class="index-cta-check" aria-hidden="true">
+              <svg data-element-type="icon" data-icon-type="svg" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="9" cy="9" r="9" fill="rgba(0,212,255,0.15)"></circle>
+                <path d="M5 9.5L7.5 12L13 6.5" stroke="#00D4FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+            </span>
+            <span>אוספים מותאמים לטיולים, חינוך ותיירות</span>
+          </li>
+          <li class="index-cta-reassurance-item">
+            <span class="index-cta-check" aria-hidden="true">
+              <svg data-element-type="icon" data-icon-type="svg" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="9" cy="9" r="9" fill="rgba(0,212,255,0.15)"></circle>
+                <path d="M5 9.5L7.5 12L13 6.5" stroke="#00D4FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+            </span>
+            <span>ייעוץ אישי ומקצועי ללא עלות</span>
+          </li>
+        </ul>
+
+        <a href="#contact" class="index-cta-btn">
+          <span>קבלו הצעה מותאמת אישית</span>
+          <svg data-element-type="icon" data-icon-type="svg" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M14 9H4M8 5L4 9L8 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </a>
+      </div>
+
+      <!-- END column: contact form -->
+      <div class="index-cta-form-panel">
+        <!-- Topo pattern inside form panel -->
+        <div class="index-cta-form-topo" aria-hidden="true"></div>
+
+        <div class="index-cta-form-header">
+          <h3 class="index-cta-form-title">שלחו לנו פנייה</h3>
+          <p class="index-cta-form-subtitle">נחזור אליכם תוך יום עסקים</p>
+        </div>
+
+        <form class="contact-form index-cta-form" novalidate="">
+          <div class="index-cta-field">
+            <label class="index-cta-label" for="cta-name">שם מלא</label>
+            <input class="index-cta-input" type="text" id="cta-name" name="name" placeholder="הכניסו את שמכם" required="">
+          </div>
+
+          <div class="index-cta-field">
+            <label class="index-cta-label" for="cta-email">כתובת אימייל</label>
+            <input class="index-cta-input" type="email" id="cta-email" name="email" placeholder="your@email.com" required="">
+          </div>
+
+          <div class="index-cta-field">
+            <label class="index-cta-label" for="cta-phone">טלפון</label>
+            <input class="index-cta-input" type="tel" id="cta-phone" name="phone" placeholder="050-0000000">
+          </div>
+
+          <div class="index-cta-field">
+            <label class="index-cta-label" for="cta-message">במה נוכל לעזור?</label>
+            <textarea class="index-cta-input index-cta-textarea" id="cta-message" name="message" placeholder="ספרו לנו על הפרויקט או הצורך שלכם — טיול, חינוך, תיירות..." rows="4" required=""></textarea>
+          </div>
+
+          <div class="privacy-consent">
+            <label class="privacy-consent-label">
+              <input type="checkbox" name="privacy_consent" class="privacy-consent-checkbox" required="">
+              <span>קראתי ואני מסכים/ה ל<a href="/terms" target="_blank">תנאי השימוש</a> ול<a href="/privacy" target="_blank">מדיניות הפרטיות</a></span>
+            </label>
+          </div>
+
+          <button type="submit" class="index-cta-submit">
+            <span>שלחו פנייה</span>
+            <svg data-element-type="icon" data-icon-type="svg" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M14 9H4M8 5L4 9L8 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Bottom trust bar -->
+    <div class="index-cta-trust-bar">
+      <span class="index-cta-trust-icon" aria-hidden="true">
+        <svg data-element-type="icon" data-icon-type="svg" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 1L10 6H15L11 9.5L12.5 15L8 12L3.5 15L5 9.5L1 6H6L8 1Z" stroke="#FFC857" stroke-width="1.5" stroke-linejoin="round" fill="rgba(255,200,87,0.15)"></path>
+        </svg>
+      </span>
+      <p class="index-cta-trust-text">מעל 10,000 מפות ישראל מועברות מדי שנה — בואו נמצא יחד את הפתרון הגיאוגרפי המושלם עבורכם.</p>
+      <span class="index-cta-trust-micro">הצטרפו לאלפי לקוחות מרוצים →</span>
+    </div>
+  </div>
+</section>
+  </main>
+  
+  <footer class="site-footer" dir="rtl" aria-label="כותרת תחתונה של מפות ישראל">
+  <div class="footer-top-accent"></div>
+  <div class="footer-container">
+    <div class="footer-grid">
+
+      <!-- Column 1: Company Info -->
+      <div class="footer-col footer-col--brand">
+        <img src="/assets/maps-geography-logo.webp" alt="מפות ישראל" class="logo">
+        <p class="footer-tagline">חוקרים את הארץ,<br><span class="tagline-accent">מפה אחר מפה.</span></p>
+        <p class="footer-blurb">מפות ישראל מציעה את האטלס הדיגיטלי המקיף ביותר לגיאוגרפיה, טופוגרפיה ומיפוי מדויק של ארץ ישראל.</p>
+        <div class="footer-badge"><i class="fas fa-globe-asia"></i> מיפוי מדויק 24/7</div>
+      </div>
+
+      <!-- Column 2: Quick Links -->
+      <div class="footer-col footer-col--links">
+        <h3 class="footer-heading">ניווט מהיר</h3>
+        <ul class="footer-links" aria-label="קישורי ניווט מהיר">
+          <li><a href="#features" aria-label="עבור ל-Features">Features</a></li>
+          <li><a href="#showcase" aria-label="עבור ל-Showcase">Showcase</a></li>
+          <li><a href="#benefits" aria-label="עבור ל-Benefits">Benefits</a></li>
+          <li><a href="#testimonials" aria-label="עבור ל-Testimonials">Testimonials</a></li>
+          <li><a href="#stats" aria-label="עבור ל-Stats">Stats</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 3: Contact Info -->
+      <div class="footer-col footer-col--contact">
+        <h3 class="footer-heading">צור קשר</h3>
+        <ul class="footer-contact" aria-label="פרטי יצירת קשר">
+          <li>
+            <span class="contact-icon"><i class="fas fa-envelope"></i></span>
+            <span class="contact-text"><a href="mailto:[business_email]">[business_email]</a></span>
+          </li>
+          <li>
+            <span class="contact-icon"><i class="fas fa-phone"></i></span>
+            <span class="contact-text"><a href="tel:[business_phone]">[business_phone]</a></span>
+          </li>
+          <li><a href="/"><span class="contact-icon"><i class="fas fa-map-marker-alt"></i></span>
+            <span class="contact-text">[business_address]</span></a></li>
+        </ul>
+        <div class="footer-hours">
+          <h4 class="footer-subheading"><i class="fas fa-clock"></i> שעות פעילות</h4>
+          <p class="hours-row"><span class="hours-day">ראשון – חמישי</span><span class="hours-time">08:00 – 18:00</span></p>
+          <p class="hours-row"><span class="hours-day">שישי</span><span class="hours-time">08:00 – 13:00</span></p>
+          <p class="hours-row"><span class="hours-day">שבת</span><span class="hours-time hours-closed">סגור</span></p>
+        </div>
+      </div>
+
+      <!-- Column 4: Social -->
+      <div class="footer-col footer-col--social">
+        <h3 class="footer-heading">עקבו אחרינו</h3>
+        <p class="footer-social-desc">הצטרפו לקהילת חובבי המפות שלנו ברשתות החברתיות</p>
+        <div class="footer-social-icons" aria-label="קישורי רשתות חברתיות">
+          
+          
+          
+        </div>
+        <div class="footer-newsletter">
+          <p class="newsletter-label"><i class="fas fa-map-pin"></i> עדכונים גיאוגרפיים</p>
+          <p class="newsletter-sub">קבלו חדשות מיפוי ישירות למייל</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="footer-divider"></div>
+
+  <!-- Bottom Bar -->
+  <div class="footer-bottom-wrap">
+    <div class="footer-container">
+      <div class="footer-bottom">
+        <p class="footer-copyright" aria-label="זכויות יוצרים">© 2026 מפות ישראל. כל הזכויות שמורות.</p>
+        <div class="footer-legal" aria-label="קישורים משפטיים">
+          <a href="/privacy" aria-label="מדיניות פרטיות">מדיניות פרטיות</a>
+          <span class="legal-sep" aria-hidden="true">·</span>
+          <a href="/terms" aria-label="תנאי שימוש">תנאי שימוש</a>
+          <span class="legal-sep" aria-hidden="true">·</span>
+          <a href="/accessibility" aria-label="נגישות">נגישות</a>
+          <span class="legal-sep" aria-hidden="true">·</span>
+          <a href="https://zappy5.com" target="_blank" class="zappy-attribution" aria-label="נוצר באמצעות Zappy">נוצר באמצעות Zappy</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</footer>
+  
+  <a href="https://wa.me/[whatsapp_handle]" class="whatsapp-float" aria-label="WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+  </a>
+  
+  <div data-integration="accessibility:toolbar"></div>
+
+    <script src="/script.js"></script>
+
+    <script id="zappy-mobile-submenu-script">
+    (function() {
+      function initMobileSubmenuToggles() {
+        if (window.innerWidth > 768) {
+          document.querySelectorAll('.mobile-submenu-toggle').forEach(function(btn) { btn.remove(); });
+          document.querySelectorAll('.sub-menu.mobile-expanded').forEach(function(menu) { menu.classList.remove('mobile-expanded'); });
+          return;
+        }
+        var items = document.querySelectorAll('.nav-menu li:has(.sub-menu), nav li:has(.sub-menu), .navbar li:has(.sub-menu), #navMenu li:has(.sub-menu)');
+        items.forEach(function(li) {
+          if (li.querySelector('.mobile-submenu-toggle')) return;
+          var submenu = li.querySelector('.sub-menu');
+          var parentLink = li.querySelector(':scope > a');
+          if (!submenu || !parentLink) return;
+          var toggleBtn = document.createElement('button');
+          toggleBtn.className = 'mobile-submenu-toggle';
+          toggleBtn.setAttribute('aria-label', 'Toggle submenu');
+          toggleBtn.setAttribute('type', 'button');
+          parentLink.insertAdjacentElement('afterend', toggleBtn);
+          toggleBtn.addEventListener('click', function(e) {
+            e.preventDefault(); e.stopPropagation();
+            document.querySelectorAll('.sub-menu.mobile-expanded').forEach(function(menu) {
+              if (menu !== submenu) { menu.classList.remove('mobile-expanded'); var t = menu.parentElement.querySelector('.mobile-submenu-toggle'); if(t) t.classList.remove('expanded'); }
+            });
+            submenu.classList.toggle('mobile-expanded');
+            toggleBtn.classList.toggle('expanded');
+          });
+        });
+      }
+      if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initMobileSubmenuToggles); }
+      else { initMobileSubmenuToggles(); }
+      var resizeTimer; window.addEventListener('resize', function() { clearTimeout(resizeTimer); resizeTimer = setTimeout(initMobileSubmenuToggles, 250); });
+      // Re-initialize when mobile menu becomes visible (MutationObserver)
+      var observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+          if (mutation.type === 'attributes') {
+            var target = mutation.target;
+            if (target.classList && (target.classList.contains('active') || target.classList.contains('open'))) {
+              setTimeout(initMobileSubmenuToggles, 100);
+            }
+          }
+        });
+      });
+      setTimeout(function() {
+        document.querySelectorAll('.mobile-menu, .nav-menu, #navMenu, nav').forEach(function(menu) {
+          observer.observe(menu, { attributes: true, attributeFilter: ['class', 'style'] });
+        });
+      }, 500);
+    })();
+    </script>
+
+    <script id="zappy-navbar-scroll-effect">
+    (function(){
+      var nb=document.querySelector('nav.navbar,.navbar:not(.zappy-catalog-menu)');
+      var cm=document.querySelector('.zappy-catalog-menu,#zappy-catalog-menu');
+      if(!nb)return;
+      var fb='rgba(245,241,232,0.85)';
+      var th=60;
+      var rs=getComputedStyle(document.documentElement);
+      var td=rs.getPropertyValue('--text-dark').trim()||'#1a1a1a';
+      var tl=rs.getPropertyValue('--text-light').trim()||'#ffffff';
+      var st=true?td:tl;
+      nb.style.transition='background 0.3s ease,backdrop-filter 0.3s ease,-webkit-backdrop-filter 0.3s ease,box-shadow 0.3s ease';
+      if(cm)cm.style.transition='background 0.3s ease,backdrop-filter 0.3s ease,-webkit-backdrop-filter 0.3s ease';
+      var neSel='a,.navbar-brand,.navbar-brand a,.dropdown-toggle,.mobile-toggle,.phone-header-btn,.mobile-hamburger-btn,.mobile-close-btn,.mobile-submenu-toggle,.nav-link';
+      var skipCls=['cart-link','login-link','nav-search-toggle','search-toggle'];
+      function sTC(c,clr){var els=c.querySelectorAll(neSel);for(var i=0;i<els.length;i++){var sk=false;if(els[i].closest('.sub-menu')||els[i].closest('.dropdown-menu')){sk=true;}for(var j=0;j<skipCls.length;j++){if(els[i].classList.contains(skipCls[j])){sk=true;break;}}if(!sk)els[i].style.setProperty('color',clr,'important');}}
+      function cTC(c){var els=c.querySelectorAll(neSel);for(var i=0;i<els.length;i++){if(els[i].closest('.sub-menu')||els[i].closest('.dropdown-menu'))continue;els[i].style.removeProperty('color');}}
+      function applyScrolled(){
+        nb.classList.add('scrolled');
+        if(window.innerWidth>768){
+          nb.style.setProperty('--frosted-text',st);
+          nb.style.setProperty('background-image','none','important');
+          nb.style.setProperty('background-color',fb,'important');
+          nb.style.backdropFilter='blur(12px)';nb.style.webkitBackdropFilter='blur(12px)';nb.style.boxShadow='0 2px 16px rgba(0,0,0,0.12)';
+          sTC(nb,st);
+        }
+        if(cm){cm.classList.add('scrolled');if(window.innerWidth>768){cm.style.setProperty('background',fb,'important');cm.style.setProperty('backdrop-filter','blur(12px)','important');cm.style.setProperty('-webkit-backdrop-filter','blur(12px)','important');sTC(cm,st);}}
+      }
+      function onS(){
+        if(window._zappyNavNoDarkHero) return;
+        if(window.innerWidth<=768){nb.classList.remove('scrolled');cTC(nb);if(cm){cm.classList.remove('scrolled');cTC(cm);}return;}
+        var y=window.scrollY||window.pageYOffset;
+        if(y>th){
+          nb.classList.add('scrolled');nb.style.setProperty('background-color',fb,'important');nb.style.setProperty('background-image','none','important');
+          nb.style.setProperty('--frosted-text',st);nb.style.backdropFilter='blur(12px)';nb.style.webkitBackdropFilter='blur(12px)';nb.style.boxShadow='0 2px 16px rgba(0,0,0,0.12)';
+          sTC(nb,st);
+          if(cm){cm.classList.add('scrolled');cm.style.setProperty('background',fb,'important');cm.style.setProperty('backdrop-filter','blur(12px)','important');cm.style.setProperty('-webkit-backdrop-filter','blur(12px)','important');sTC(cm,st);}
+        }else{
+          nb.classList.remove('scrolled');nb.style.setProperty('background-color','transparent','important');nb.style.removeProperty('background-image');
+          nb.style.removeProperty('--frosted-text');nb.style.backdropFilter='none';nb.style.webkitBackdropFilter='none';nb.style.boxShadow='none';
+          cTC(nb);
+          if(cm){cm.classList.remove('scrolled');cm.style.setProperty('background','transparent','important');cm.style.setProperty('backdrop-filter','none','important');cm.style.setProperty('-webkit-backdrop-filter','none','important');cTC(cm);}
+        }
+      }
+      function sLum(rv,gv,bv){rv/=255;gv/=255;bv/=255;rv=rv<=0.03928?rv/12.92:Math.pow((rv+0.055)/1.055,2.4);gv=gv<=0.03928?gv/12.92:Math.pow((gv+0.055)/1.055,2.4);bv=bv<=0.03928?bv/12.92:Math.pow((bv+0.055)/1.055,2.4);return 0.2126*rv+0.7152*gv+0.0722*bv;}
+      window.addEventListener('scroll',onS,{passive:true});
+      window.addEventListener('resize',onS,{passive:true});
+      onS();
+      var heroEl=document.querySelector('section[class*="hero"],[data-hero-type],main>section:first-child');
+      var hasDH=false;
+      if(heroEl){var hCs=getComputedStyle(heroEl);var hBI=hCs.backgroundImage;if(hBI&&hBI!=='none'){if(hBI.indexOf('url(')!==-1){var hM2=hCs.backgroundColor.match(/\d+/g);if(hM2&&hM2.length>=3){hasDH=sLum(parseInt(hM2[0]),parseInt(hM2[1]),parseInt(hM2[2]))<0.4;}else{hasDH=true;}}else if(hBI.indexOf('gradient')!==-1){var cM=hBI.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/g);if(cM&&cM.length>0){var tLm=0;for(var ci=0;ci<cM.length;ci++){var pts=cM[ci].match(/\d+/g);tLm+=sLum(parseInt(pts[0]),parseInt(pts[1]),parseInt(pts[2]));}hasDH=(tLm/cM.length)<0.4;}else{hasDH=true;}}else{hasDH=true;}}else{var hM=hCs.backgroundColor.match(/\d+/g);if(hM&&hM.length>=3){hasDH=sLum(parseInt(hM[0]),parseInt(hM[1]),parseInt(hM[2]))<0.4;}}}
+      if(!hasDH){window.removeEventListener('scroll',onS);window.removeEventListener('resize',onS);applyScrolled();window._zappyNavNoDarkHero=true;}
+    })();
+    </script>
+</body>
+</html>

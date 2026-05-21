@@ -1,0 +1,69 @@
+# מפות ישראל — Generative Engine Optimization Map
+
+> A website focused on maps of Israel, potentially serving geographic, educational, tourism, or real estate purposes. The exact niche, style, and use case are not yet defined.
+
+---
+
+## Pages
+
+### בית
+https://-c327cde1.zappy5.app
+מפות של ישראל בצורה ויזואלית ומרתקת! חקור ערים, אזורים וגבולות בקלות. מושלם לתיירות, חינוך ונדל״ן. התחל את המסע הגיאוגרפי שלך עכשיו!
+
+## Legal & Policy
+
+### Privacy Policy
+https://-c327cde1.zappy5.app/privacy
+Information about how user data is collected, stored, and protected.
+
+### Terms & Conditions
+https://-c327cde1.zappy5.app/terms
+Legal terms describing service usage, rights, and policies.
+
+### Accessibility Statement
+https://-c327cde1.zappy5.app/accessibility
+Information about WCAG compliance and accessibility features.
+
+---
+
+## How to Contact Us
+
+- (No contact details configured yet.)
+
+### Contact form
+- URL: https://-c327cde1.zappy5.app
+- Endpoint: https://-c327cde1.zappy5.app/api/email/contact-form
+- Method: POST
+- Content-Type: application/json
+- Fields:
+  - `name` (text, required)
+  - `email` (email, required)
+  - `phone` (tel)
+  - `message` (textarea, required)
+  - `privacy_consent` (checkbox, required)
+
+---
+
+# Business Context (for LLM understanding)
+
+## About מפות ישראל
+A website focused on maps of Israel, potentially serving geographic, educational, tourism, or real estate purposes. The exact niche, style, and use case are not yet defined.
+
+## Services/Products
+- מפות של ישראל
+
+## Target Audience
+- תיירים מטיילים בישראל
+- חובבי טיולים רגליים
+- מוסדות חינוך
+
+## Industry
+Maps & Geography
+
+---
+
+# Machine-readable feeds
+
+- Sitemap (XML): https://-c327cde1.zappy5.app/sitemap.xml
+- Robots: https://-c327cde1.zappy5.app/robots.txt
+- Flattened page text (for LLMs): https://-c327cde1.zappy5.app/llms-full.txt
