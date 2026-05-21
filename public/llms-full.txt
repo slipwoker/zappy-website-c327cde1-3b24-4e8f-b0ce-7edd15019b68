@@ -2,13 +2,13 @@
 
 A website focused on maps of Israel, potentially serving geographic, educational, tourism, or real estate purposes. The exact niche, style, and use case are not yet defined.
 
-Source: https://-c327cde1.zappy5.app
+Source: https://example.com
 
 ---
 
 ## גלה את ישראל מכל זווית — מפות ישראל
 
-URL: https://-c327cde1.zappy5.app
+URL: https://example.com
 Description: מפות של ישראל בצורה ויזואלית ומרתקת! חקור ערים, אזורים וגבולות בקלות. מושלם לתיירות, חינוך ונדל״ן. התחל את המסע הגיאוגרפי שלך עכשיו!
 
 גלה את ישראל מכל זווית — מפות ישראל
@@ -846,7 +846,7 @@ Description: מפות של ישראל בצורה ויזואלית ומרתקת! 
 
 ## מדיניות פרטיות
 
-URL: https://-c327cde1.zappy5.app/privacy
+URL: https://example.com/privacy
 Description: מדיניות הפרטיות שלנו - כיצד אנו אוספים, משתמשים ומגנים על המידע שלכם
 
 מדיניות פרטיות
@@ -1134,7 +1134,7 @@ Description: מדיניות הפרטיות שלנו - כיצד אנו אוספי
 
 ## הצהרת נגישות
 
-URL: https://-c327cde1.zappy5.app/accessibility
+URL: https://example.com/accessibility
 Description: הצהרת הנגישות שלנו - מחויבותנו לנגישות דיגיטלית
 
 הצהרת נגישות
@@ -1431,7 +1431,7 @@ Description: הצהרת הנגישות שלנו - מחויבותנו לנגיש�
 
 ## תנאי שימוש
 
-URL: https://-c327cde1.zappy5.app/terms
+URL: https://example.com/terms
 Description: תנאי השימוש באתר - הזכויות והחובות של המשתמשים
 
 תנאי שימוש
